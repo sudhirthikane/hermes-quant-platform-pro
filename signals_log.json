@@ -1,0 +1,2291 @@
+[
+    {
+        "timestamp": "2025-08-07T00:00:00",
+        "ticker": "AAPL",
+        "action": "MSS BULLISH",
+        "price": 219.16,
+        "rsi": 67.76
+    },
+    {
+        "timestamp": "2025-08-07T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 219.16,
+        "rsi": 67.76
+    },
+    {
+        "timestamp": "2025-08-08T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 228.44,
+        "rsi": 75.36
+    },
+    {
+        "timestamp": "2025-08-11T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 226.54,
+        "rsi": 71.63
+    },
+    {
+        "timestamp": "2025-08-13T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 232.67,
+        "rsi": 75.95
+    },
+    {
+        "timestamp": "2025-08-14T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 232.12,
+        "rsi": 74.82
+    },
+    {
+        "timestamp": "2025-08-29T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 231.49,
+        "rsi": 66.49
+    },
+    {
+        "timestamp": "2025-09-03T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 237.8,
+        "rsi": 70.54
+    },
+    {
+        "timestamp": "2025-09-04T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 239.1,
+        "rsi": 71.67
+    },
+    {
+        "timestamp": "2025-09-15T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 236.03,
+        "rsi": 60.15
+    },
+    {
+        "timestamp": "2025-09-16T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 237.48,
+        "rsi": 61.66
+    },
+    {
+        "timestamp": "2025-09-19T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 244.81,
+        "rsi": 68.08
+    },
+    {
+        "timestamp": "2025-09-22T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 255.36,
+        "rsi": 75.16
+    },
+    {
+        "timestamp": "2025-09-23T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 253.71,
+        "rsi": 72.46
+    },
+    {
+        "timestamp": "2025-10-20T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 261.5,
+        "rsi": 66.36
+    },
+    {
+        "timestamp": "2025-10-21T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 262.03,
+        "rsi": 66.79
+    },
+    {
+        "timestamp": "2025-10-27T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 268.05,
+        "rsi": 69.06
+    },
+    {
+        "timestamp": "2025-10-28T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 268.24,
+        "rsi": 69.2
+    },
+    {
+        "timestamp": "2025-11-25T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 276.46,
+        "rsi": 66.31
+    },
+    {
+        "timestamp": "2025-12-02T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 285.66,
+        "rsi": 75.26
+    },
+    {
+        "timestamp": "2025-12-26T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 272.89,
+        "rsi": 49.17
+    },
+    {
+        "timestamp": "2026-01-06T00:00:00",
+        "ticker": "AAPL",
+        "action": "MSS BEARISH",
+        "price": 261.87,
+        "rsi": 29.94
+    },
+    {
+        "timestamp": "2026-01-06T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 261.87,
+        "rsi": 29.94
+    },
+    {
+        "timestamp": "2026-01-07T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 259.85,
+        "rsi": 27.65
+    },
+    {
+        "timestamp": "2026-01-08T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 258.56,
+        "rsi": 26.27
+    },
+    {
+        "timestamp": "2026-01-20T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 246.24,
+        "rsi": 17.91
+    },
+    {
+        "timestamp": "2026-01-21T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 247.19,
+        "rsi": 20.57
+    },
+    {
+        "timestamp": "2026-02-06T00:00:00",
+        "ticker": "AAPL",
+        "action": "MSS BULLISH",
+        "price": 277.6,
+        "rsi": 69.03
+    },
+    {
+        "timestamp": "2026-02-18T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 264.11,
+        "rsi": 49.08
+    },
+    {
+        "timestamp": "2026-02-24T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 271.89,
+        "rsi": 56.95
+    },
+    {
+        "timestamp": "2026-02-25T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 273.98,
+        "rsi": 58.74
+    },
+    {
+        "timestamp": "2026-03-13T00:00:00",
+        "ticker": "AAPL",
+        "action": "MSS BEARISH",
+        "price": 249.89,
+        "rsi": 34.59
+    },
+    {
+        "timestamp": "2026-03-13T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 249.89,
+        "rsi": 34.59
+    },
+    {
+        "timestamp": "2026-03-16T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 252.59,
+        "rsi": 38.72
+    },
+    {
+        "timestamp": "2026-03-19T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bearish FVG",
+        "price": 248.73,
+        "rsi": 35.81
+    },
+    {
+        "timestamp": "2026-04-06T00:00:00",
+        "ticker": "AAPL",
+        "action": "MSS BULLISH",
+        "price": 258.62,
+        "rsi": 54.43
+    },
+    {
+        "timestamp": "2026-04-06T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 258.62,
+        "rsi": 54.43
+    },
+    {
+        "timestamp": "2026-04-17T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 269.98,
+        "rsi": 64.18
+    },
+    {
+        "timestamp": "2026-04-20T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 272.8,
+        "rsi": 66.53
+    },
+    {
+        "timestamp": "2026-05-01T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 279.88,
+        "rsi": 66.44
+    },
+    {
+        "timestamp": "2026-05-06T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 287.25,
+        "rsi": 69.41
+    },
+    {
+        "timestamp": "2026-05-07T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 287.18,
+        "rsi": 69.31
+    },
+    {
+        "timestamp": "2026-05-08T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 293.05,
+        "rsi": 72.94
+    },
+    {
+        "timestamp": "2026-05-14T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 298.21,
+        "rsi": 74.83
+    },
+    {
+        "timestamp": "2026-05-22T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 308.82,
+        "rsi": 78.63
+    },
+    {
+        "timestamp": "2026-05-26T00:00:00",
+        "ticker": "AAPL",
+        "action": "Bullish FVG",
+        "price": 308.33,
+        "rsi": 77.63
+    },
+    {
+        "timestamp": "2025-07-09T00:00:00",
+        "ticker": "MSFT",
+        "action": "MSS BULLISH",
+        "price": 499.52,
+        "rsi": 0.0
+    },
+    {
+        "timestamp": "2025-07-09T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 499.52,
+        "rsi": 0.0
+    },
+    {
+        "timestamp": "2025-07-09T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bull OB Long",
+        "price": 499.52,
+        "rsi": 0.0
+    },
+    {
+        "timestamp": "2025-07-18T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 506.01,
+        "rsi": 75.19
+    },
+    {
+        "timestamp": "2025-07-25T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 509.64,
+        "rsi": 72.49
+    },
+    {
+        "timestamp": "2025-07-31T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 529.27,
+        "rsi": 83.34
+    },
+    {
+        "timestamp": "2025-08-01T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 519.96,
+        "rsi": 68.49
+    },
+    {
+        "timestamp": "2025-08-18T00:00:00",
+        "ticker": "MSFT",
+        "action": "MSS BEARISH",
+        "price": 513.0,
+        "rsi": 51.49
+    },
+    {
+        "timestamp": "2025-08-19T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 505.73,
+        "rsi": 45.24
+    },
+    {
+        "timestamp": "2025-08-20T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 501.71,
+        "rsi": 42.19
+    },
+    {
+        "timestamp": "2025-08-21T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 501.07,
+        "rsi": 41.71
+    },
+    {
+        "timestamp": "2025-09-08T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 495.06,
+        "rsi": 40.48
+    },
+    {
+        "timestamp": "2025-09-24T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 506.94,
+        "rsi": 51.25
+    },
+    {
+        "timestamp": "2025-10-01T00:00:00",
+        "ticker": "MSFT",
+        "action": "MSS BULLISH",
+        "price": 516.44,
+        "rsi": 59.57
+    },
+    {
+        "timestamp": "2025-10-07T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 520.68,
+        "rsi": 59.83
+    },
+    {
+        "timestamp": "2025-10-27T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 528.17,
+        "rsi": 66.57
+    },
+    {
+        "timestamp": "2025-10-28T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 538.66,
+        "rsi": 73.1
+    },
+    {
+        "timestamp": "2025-10-29T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 538.14,
+        "rsi": 72.35
+    },
+    {
+        "timestamp": "2025-11-06T00:00:00",
+        "ticker": "MSFT",
+        "action": "MSS BEARISH",
+        "price": 493.97,
+        "rsi": 34.08
+    },
+    {
+        "timestamp": "2025-11-06T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 493.97,
+        "rsi": 34.08
+    },
+    {
+        "timestamp": "2025-11-07T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 493.69,
+        "rsi": 33.93
+    },
+    {
+        "timestamp": "2025-11-19T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 484.05,
+        "rsi": 34.15
+    },
+    {
+        "timestamp": "2025-11-21T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 470.03,
+        "rsi": 28.39
+    },
+    {
+        "timestamp": "2025-12-03T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 475.61,
+        "rsi": 38.09
+    },
+    {
+        "timestamp": "2025-12-04T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 478.71,
+        "rsi": 40.51
+    },
+    {
+        "timestamp": "2025-12-10T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 476.44,
+        "rsi": 40.8
+    },
+    {
+        "timestamp": "2025-12-11T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 481.33,
+        "rsi": 44.38
+    },
+    {
+        "timestamp": "2026-01-02T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 470.84,
+        "rsi": 37.36
+    },
+    {
+        "timestamp": "2026-01-05T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 470.75,
+        "rsi": 37.29
+    },
+    {
+        "timestamp": "2026-01-14T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 457.34,
+        "rsi": 31.48
+    },
+    {
+        "timestamp": "2026-01-15T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 454.64,
+        "rsi": 30.06
+    },
+    {
+        "timestamp": "2026-01-21T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 442.14,
+        "rsi": 26.02
+    },
+    {
+        "timestamp": "2026-01-29T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 431.58,
+        "rsi": 33.58
+    },
+    {
+        "timestamp": "2026-01-30T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 428.38,
+        "rsi": 32.64
+    },
+    {
+        "timestamp": "2026-02-03T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 409.39,
+        "rsi": 27.47
+    },
+    {
+        "timestamp": "2026-02-04T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 412.35,
+        "rsi": 29.4
+    },
+    {
+        "timestamp": "2026-02-05T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 391.92,
+        "rsi": 24.56
+    },
+    {
+        "timestamp": "2026-02-06T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 399.36,
+        "rsi": 29.13
+    },
+    {
+        "timestamp": "2026-02-12T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 400.06,
+        "rsi": 32.55
+    },
+    {
+        "timestamp": "2026-02-23T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 383.64,
+        "rsi": 27.86
+    },
+    {
+        "timestamp": "2026-02-24T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 388.16,
+        "rsi": 31.5
+    },
+    {
+        "timestamp": "2026-03-16T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 399.09,
+        "rsi": 42.89
+    },
+    {
+        "timestamp": "2026-03-19T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 388.18,
+        "rsi": 36.05
+    },
+    {
+        "timestamp": "2026-03-20T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 381.04,
+        "rsi": 32.22
+    },
+    {
+        "timestamp": "2026-03-25T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 370.24,
+        "rsi": 27.74
+    },
+    {
+        "timestamp": "2026-03-27T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 356.0,
+        "rsi": 22.29
+    },
+    {
+        "timestamp": "2026-04-16T00:00:00",
+        "ticker": "MSFT",
+        "action": "MSS BULLISH",
+        "price": 419.35,
+        "rsi": 70.78
+    },
+    {
+        "timestamp": "2026-04-16T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 419.35,
+        "rsi": 70.78
+    },
+    {
+        "timestamp": "2026-04-17T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 421.88,
+        "rsi": 71.7
+    },
+    {
+        "timestamp": "2026-04-22T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 431.98,
+        "rsi": 73.1
+    },
+    {
+        "timestamp": "2026-05-07T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 419.86,
+        "rsi": 57.82
+    },
+    {
+        "timestamp": "2026-05-15T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 421.01,
+        "rsi": 57.9
+    },
+    {
+        "timestamp": "2026-05-18T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 422.62,
+        "rsi": 58.78
+    },
+    {
+        "timestamp": "2026-05-29T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 450.24,
+        "rsi": 70.09
+    },
+    {
+        "timestamp": "2026-06-01T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 460.52,
+        "rsi": 73.32
+    },
+    {
+        "timestamp": "2026-06-09T00:00:00",
+        "ticker": "MSFT",
+        "action": "MSS BEARISH",
+        "price": 403.41,
+        "rsi": 41.96
+    },
+    {
+        "timestamp": "2026-06-09T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 403.41,
+        "rsi": 41.96
+    },
+    {
+        "timestamp": "2026-06-10T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 397.36,
+        "rsi": 39.57
+    },
+    {
+        "timestamp": "2026-06-11T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 390.34,
+        "rsi": 36.94
+    },
+    {
+        "timestamp": "2026-06-12T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 390.74,
+        "rsi": 37.2
+    },
+    {
+        "timestamp": "2026-06-17T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 378.91,
+        "rsi": 34.66
+    },
+    {
+        "timestamp": "2026-06-18T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 379.4,
+        "rsi": 34.98
+    },
+    {
+        "timestamp": "2025-09-01T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "MSS BEARISH",
+        "price": 1347.67,
+        "rsi": 36.07
+    },
+    {
+        "timestamp": "2025-09-01T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1347.67,
+        "rsi": 36.07
+    },
+    {
+        "timestamp": "2025-09-23T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1383.4,
+        "rsi": 48.06
+    },
+    {
+        "timestamp": "2025-10-16T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "MSS BULLISH",
+        "price": 1391.86,
+        "rsi": 57.13
+    },
+    {
+        "timestamp": "2025-10-17T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1410.28,
+        "rsi": 63.18
+    },
+    {
+        "timestamp": "2025-10-20T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1460.05,
+        "rsi": 73.9
+    },
+    {
+        "timestamp": "2025-10-21T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1458.46,
+        "rsi": 73.17
+    },
+    {
+        "timestamp": "2025-10-28T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1480.06,
+        "rsi": 73.02
+    },
+    {
+        "timestamp": "2025-10-29T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1497.28,
+        "rsi": 75.7
+    },
+    {
+        "timestamp": "2025-11-13T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1503.95,
+        "rsi": 67.56
+    },
+    {
+        "timestamp": "2025-11-21T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1539.48,
+        "rsi": 73.9
+    },
+    {
+        "timestamp": "2025-12-19T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1557.9,
+        "rsi": 63.81
+    },
+    {
+        "timestamp": "2025-12-22T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1568.15,
+        "rsi": 66.82
+    },
+    {
+        "timestamp": "2026-01-01T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1568.35,
+        "rsi": 61.66
+    },
+    {
+        "timestamp": "2026-01-02T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1584.97,
+        "rsi": 66.15
+    },
+    {
+        "timestamp": "2026-01-06T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "MSS BEARISH",
+        "price": 1500.66,
+        "rsi": 39.38
+    },
+    {
+        "timestamp": "2026-01-06T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1500.66,
+        "rsi": 39.38
+    },
+    {
+        "timestamp": "2026-01-06T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bear OB Short",
+        "price": 1500.66,
+        "rsi": 39.38
+    },
+    {
+        "timestamp": "2026-01-07T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1497.28,
+        "rsi": 38.69
+    },
+    {
+        "timestamp": "2026-01-09T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1468.51,
+        "rsi": 34.2
+    },
+    {
+        "timestamp": "2026-01-19T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1407.09,
+        "rsi": 26.34
+    },
+    {
+        "timestamp": "2026-01-20T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1387.58,
+        "rsi": 23.93
+    },
+    {
+        "timestamp": "2026-01-27T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1374.15,
+        "rsi": 24.47
+    },
+    {
+        "timestamp": "2026-02-13T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1413.07,
+        "rsi": 42.02
+    },
+    {
+        "timestamp": "2026-02-16T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1430.49,
+        "rsi": 46.91
+    },
+    {
+        "timestamp": "2026-02-26T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1400.33,
+        "rsi": 42.65
+    },
+    {
+        "timestamp": "2026-03-02T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1351.75,
+        "rsi": 33.67
+    },
+    {
+        "timestamp": "2026-03-04T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1338.81,
+        "rsi": 31.71
+    },
+    {
+        "timestamp": "2026-03-27T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1341.9,
+        "rsi": 37.7
+    },
+    {
+        "timestamp": "2026-03-30T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1337.71,
+        "rsi": 37.02
+    },
+    {
+        "timestamp": "2026-04-06T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1298.7,
+        "rsi": 33.47
+    },
+    {
+        "timestamp": "2026-04-07T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1298.6,
+        "rsi": 33.46
+    },
+    {
+        "timestamp": "2026-04-24T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1321.69,
+        "rsi": 42.69
+    },
+    {
+        "timestamp": "2026-04-28T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "MSS BULLISH",
+        "price": 1382.51,
+        "rsi": 55.16
+    },
+    {
+        "timestamp": "2026-04-28T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1382.51,
+        "rsi": 55.16
+    },
+    {
+        "timestamp": "2026-04-29T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1418.84,
+        "rsi": 60.88
+    },
+    {
+        "timestamp": "2026-05-05T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1456.86,
+        "rsi": 66.39
+    },
+    {
+        "timestamp": "2026-05-21T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bullish FVG",
+        "price": 1343.39,
+        "rsi": 44.17
+    },
+    {
+        "timestamp": "2026-06-04T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "MSS BEARISH",
+        "price": 1297.7,
+        "rsi": 34.71
+    },
+    {
+        "timestamp": "2026-06-08T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1263.3,
+        "rsi": 28.15
+    },
+    {
+        "timestamp": "2026-06-09T00:00:00",
+        "ticker": "RELIANCE.NS",
+        "action": "Bearish FVG",
+        "price": 1269.2,
+        "rsi": 30.61
+    },
+    {
+        "timestamp": "2025-10-06T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "MSS BULLISH",
+        "price": 22.52,
+        "rsi": 72.18
+    },
+    {
+        "timestamp": "2025-10-10T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 22.75,
+        "rsi": 69.71
+    },
+    {
+        "timestamp": "2025-11-06T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 25.12,
+        "rsi": 82.02
+    },
+    {
+        "timestamp": "2025-11-19T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 25.82,
+        "rsi": 72.33
+    },
+    {
+        "timestamp": "2025-11-20T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 26.3,
+        "rsi": 75.36
+    },
+    {
+        "timestamp": "2025-11-21T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 26.3,
+        "rsi": 75.36
+    },
+    {
+        "timestamp": "2025-12-15T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 28.23,
+        "rsi": 74.78
+    },
+    {
+        "timestamp": "2026-01-23T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 29.71,
+        "rsi": 71.21
+    },
+    {
+        "timestamp": "2026-02-05T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 30.31,
+        "rsi": 68.66
+    },
+    {
+        "timestamp": "2026-02-06T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 30.69,
+        "rsi": 71.33
+    },
+    {
+        "timestamp": "2026-02-18T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 31.28,
+        "rsi": 73.3
+    },
+    {
+        "timestamp": "2026-02-20T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 31.98,
+        "rsi": 78.02
+    },
+    {
+        "timestamp": "2026-03-06T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 32.37,
+        "rsi": 72.3
+    },
+    {
+        "timestamp": "2026-04-08T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 31.67,
+        "rsi": 55.84
+    },
+    {
+        "timestamp": "2026-04-13T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 33.09,
+        "rsi": 66.25
+    },
+    {
+        "timestamp": "2026-04-21T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 33.95,
+        "rsi": 71.8
+    },
+    {
+        "timestamp": "2026-05-08T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 34.27,
+        "rsi": 68.88
+    },
+    {
+        "timestamp": "2026-05-20T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 35.46,
+        "rsi": 70.3
+    },
+    {
+        "timestamp": "2026-05-21T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 37.88,
+        "rsi": 80.5
+    },
+    {
+        "timestamp": "2026-05-21T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bull OB Long",
+        "price": 37.88,
+        "rsi": 80.5
+    },
+    {
+        "timestamp": "2026-05-22T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 38.56,
+        "rsi": 82.34
+    },
+    {
+        "timestamp": "2026-05-25T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 38.83,
+        "rsi": 83.02
+    },
+    {
+        "timestamp": "2026-05-28T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 39.89,
+        "rsi": 83.41
+    },
+    {
+        "timestamp": "2026-06-19T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bullish FVG",
+        "price": 43.59,
+        "rsi": 81.01
+    },
+    {
+        "timestamp": "2026-06-19T00:00:00",
+        "ticker": "SBC.NS",
+        "action": "Bull OB Long",
+        "price": 43.59,
+        "rsi": 81.01
+    },
+    {
+        "timestamp": "2025-08-18T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "MSS BEARISH",
+        "price": 58.07,
+        "rsi": 29.89
+    },
+    {
+        "timestamp": "2025-08-19T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 59.59,
+        "rsi": 37.22
+    },
+    {
+        "timestamp": "2025-08-26T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 56.97,
+        "rsi": 31.7
+    },
+    {
+        "timestamp": "2025-08-28T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 56.32,
+        "rsi": 30.12
+    },
+    {
+        "timestamp": "2025-09-17T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "MSS BULLISH",
+        "price": 59.29,
+        "rsi": 51.57
+    },
+    {
+        "timestamp": "2025-09-17T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 59.29,
+        "rsi": 51.57
+    },
+    {
+        "timestamp": "2025-09-25T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "MSS BEARISH",
+        "price": 56.64,
+        "rsi": 38.8
+    },
+    {
+        "timestamp": "2025-09-25T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 56.64,
+        "rsi": 38.8
+    },
+    {
+        "timestamp": "2025-09-26T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 55.28,
+        "rsi": 34.11
+    },
+    {
+        "timestamp": "2025-09-29T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 55.28,
+        "rsi": 34.11
+    },
+    {
+        "timestamp": "2025-10-09T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 53.17,
+        "rsi": 29.3
+    },
+    {
+        "timestamp": "2025-10-27T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 53.71,
+        "rsi": 40.36
+    },
+    {
+        "timestamp": "2025-11-10T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 57.43,
+        "rsi": 53.8
+    },
+    {
+        "timestamp": "2025-11-19T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 56.53,
+        "rsi": 47.03
+    },
+    {
+        "timestamp": "2025-11-24T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 54.61,
+        "rsi": 37.65
+    },
+    {
+        "timestamp": "2025-11-25T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 54.19,
+        "rsi": 35.86
+    },
+    {
+        "timestamp": "2025-12-01T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 53.72,
+        "rsi": 36.95
+    },
+    {
+        "timestamp": "2025-12-04T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 50.85,
+        "rsi": 27.01
+    },
+    {
+        "timestamp": "2025-12-05T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 51.74,
+        "rsi": 33.23
+    },
+    {
+        "timestamp": "2025-12-18T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 51.78,
+        "rsi": 38.55
+    },
+    {
+        "timestamp": "2025-12-30T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 52.0,
+        "rsi": 40.76
+    },
+    {
+        "timestamp": "2026-01-09T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 49.2,
+        "rsi": 31.79
+    },
+    {
+        "timestamp": "2026-01-12T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 49.2,
+        "rsi": 31.79
+    },
+    {
+        "timestamp": "2026-01-19T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 47.98,
+        "rsi": 28.76
+    },
+    {
+        "timestamp": "2026-01-21T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 45.53,
+        "rsi": 21.88
+    },
+    {
+        "timestamp": "2026-02-06T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 48.04,
+        "rsi": 45.63
+    },
+    {
+        "timestamp": "2026-02-16T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 46.21,
+        "rsi": 39.55
+    },
+    {
+        "timestamp": "2026-02-20T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 44.46,
+        "rsi": 33.11
+    },
+    {
+        "timestamp": "2026-02-23T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 44.25,
+        "rsi": 32.36
+    },
+    {
+        "timestamp": "2026-03-02T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 40.95,
+        "rsi": 22.37
+    },
+    {
+        "timestamp": "2026-03-04T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 39.93,
+        "rsi": 20.07
+    },
+    {
+        "timestamp": "2026-03-24T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 41.04,
+        "rsi": 42.36
+    },
+    {
+        "timestamp": "2026-03-30T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bearish FVG",
+        "price": 39.56,
+        "rsi": 38.52
+    },
+    {
+        "timestamp": "2026-04-08T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "MSS BULLISH",
+        "price": 44.23,
+        "rsi": 58.02
+    },
+    {
+        "timestamp": "2026-04-08T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 44.23,
+        "rsi": 58.02
+    },
+    {
+        "timestamp": "2026-04-09T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 44.23,
+        "rsi": 58.02
+    },
+    {
+        "timestamp": "2026-04-15T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 49.13,
+        "rsi": 71.29
+    },
+    {
+        "timestamp": "2026-04-16T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 50.25,
+        "rsi": 73.44
+    },
+    {
+        "timestamp": "2026-04-17T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 52.93,
+        "rsi": 77.74
+    },
+    {
+        "timestamp": "2026-04-20T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 52.5,
+        "rsi": 75.63
+    },
+    {
+        "timestamp": "2026-04-23T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 53.73,
+        "rsi": 74.48
+    },
+    {
+        "timestamp": "2026-04-28T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 57.32,
+        "rsi": 79.94
+    },
+    {
+        "timestamp": "2026-05-22T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 53.75,
+        "rsi": 56.46
+    },
+    {
+        "timestamp": "2026-05-28T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 57.53,
+        "rsi": 68.97
+    },
+    {
+        "timestamp": "2026-06-05T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 55.31,
+        "rsi": 55.9
+    },
+    {
+        "timestamp": "2026-06-15T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 55.57,
+        "rsi": 55.71
+    },
+    {
+        "timestamp": "2026-06-17T00:00:00",
+        "ticker": "SUZLON.NS",
+        "action": "Bullish FVG",
+        "price": 59.27,
+        "rsi": 66.41
+    },
+    {
+        "timestamp": "2025-07-21T00:00:00",
+        "ticker": "GC=F",
+        "action": "MSS BULLISH",
+        "price": 3401.9,
+        "rsi": 63.32
+    },
+    {
+        "timestamp": "2025-07-21T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3401.9,
+        "rsi": 63.32
+    },
+    {
+        "timestamp": "2025-07-22T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3439.2,
+        "rsi": 68.86
+    },
+    {
+        "timestamp": "2025-08-04T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3374.4,
+        "rsi": 54.99
+    },
+    {
+        "timestamp": "2025-08-08T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3439.1,
+        "rsi": 64.18
+    },
+    {
+        "timestamp": "2025-08-22T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3374.4,
+        "rsi": 54.21
+    },
+    {
+        "timestamp": "2025-08-25T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3373.8,
+        "rsi": 54.09
+    },
+    {
+        "timestamp": "2025-08-27T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3404.6,
+        "rsi": 59.15
+    },
+    {
+        "timestamp": "2025-08-28T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3431.8,
+        "rsi": 63.15
+    },
+    {
+        "timestamp": "2025-08-29T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3473.7,
+        "rsi": 68.3
+    },
+    {
+        "timestamp": "2025-09-02T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3549.4,
+        "rsi": 75.08
+    },
+    {
+        "timestamp": "2025-09-03T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3593.2,
+        "rsi": 78.01
+    },
+    {
+        "timestamp": "2025-09-08T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3638.1,
+        "rsi": 77.17
+    },
+    {
+        "timestamp": "2025-09-09T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3643.3,
+        "rsi": 77.49
+    },
+    {
+        "timestamp": "2025-09-16T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3688.9,
+        "rsi": 79.67
+    },
+    {
+        "timestamp": "2025-09-22T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3740.7,
+        "rsi": 76.52
+    },
+    {
+        "timestamp": "2025-09-23T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3780.6,
+        "rsi": 79.01
+    },
+    {
+        "timestamp": "2025-09-26T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3775.3,
+        "rsi": 72.78
+    },
+    {
+        "timestamp": "2025-09-30T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3840.8,
+        "rsi": 77.07
+    },
+    {
+        "timestamp": "2025-10-01T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3867.5,
+        "rsi": 78.63
+    },
+    {
+        "timestamp": "2025-10-06T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3948.5,
+        "rsi": 79.48
+    },
+    {
+        "timestamp": "2025-10-07T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 3976.6,
+        "rsi": 80.78
+    },
+    {
+        "timestamp": "2025-10-08T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4043.3,
+        "rsi": 83.47
+    },
+    {
+        "timestamp": "2025-10-14T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4138.7,
+        "rsi": 77.7
+    },
+    {
+        "timestamp": "2025-10-15T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4176.9,
+        "rsi": 79.11
+    },
+    {
+        "timestamp": "2025-10-16T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4280.2,
+        "rsi": 82.35
+    },
+    {
+        "timestamp": "2025-11-10T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4111.8,
+        "rsi": 59.16
+    },
+    {
+        "timestamp": "2025-11-11T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4106.8,
+        "rsi": 58.72
+    },
+    {
+        "timestamp": "2025-11-13T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4186.9,
+        "rsi": 62.66
+    },
+    {
+        "timestamp": "2025-11-25T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4139.2,
+        "rsi": 58.33
+    },
+    {
+        "timestamp": "2025-11-26T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4165.2,
+        "rsi": 60.3
+    },
+    {
+        "timestamp": "2025-11-28T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4218.3,
+        "rsi": 64.03
+    },
+    {
+        "timestamp": "2025-12-01T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4239.3,
+        "rsi": 65.42
+    },
+    {
+        "timestamp": "2025-12-12T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4300.1,
+        "rsi": 66.99
+    },
+    {
+        "timestamp": "2025-12-15T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4306.7,
+        "rsi": 67.49
+    },
+    {
+        "timestamp": "2025-12-18T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4339.5,
+        "rsi": 69.06
+    },
+    {
+        "timestamp": "2025-12-22T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4444.6,
+        "rsi": 76.18
+    },
+    {
+        "timestamp": "2025-12-23T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4482.8,
+        "rsi": 78.17
+    },
+    {
+        "timestamp": "2025-12-24T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4480.6,
+        "rsi": 77.77
+    },
+    {
+        "timestamp": "2026-01-05T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4436.9,
+        "rsi": 60.76
+    },
+    {
+        "timestamp": "2026-01-06T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4482.2,
+        "rsi": 63.44
+    },
+    {
+        "timestamp": "2026-01-07T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4449.3,
+        "rsi": 60.22
+    },
+    {
+        "timestamp": "2026-01-09T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4490.3,
+        "rsi": 62.93
+    },
+    {
+        "timestamp": "2026-01-12T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4604.3,
+        "rsi": 69.23
+    },
+    {
+        "timestamp": "2026-01-13T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4589.2,
+        "rsi": 67.59
+    },
+    {
+        "timestamp": "2026-01-20T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4759.6,
+        "rsi": 73.47
+    },
+    {
+        "timestamp": "2026-01-21T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4831.8,
+        "rsi": 76.09
+    },
+    {
+        "timestamp": "2026-01-22T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4908.8,
+        "rsi": 78.52
+    },
+    {
+        "timestamp": "2026-01-23T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4976.2,
+        "rsi": 80.41
+    },
+    {
+        "timestamp": "2026-01-26T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5079.7,
+        "rsi": 82.88
+    },
+    {
+        "timestamp": "2026-01-27T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5079.9,
+        "rsi": 82.89
+    },
+    {
+        "timestamp": "2026-01-28T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5301.6,
+        "rsi": 86.98
+    },
+    {
+        "timestamp": "2026-01-29T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5318.4,
+        "rsi": 87.23
+    },
+    {
+        "timestamp": "2026-02-04T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4920.4,
+        "rsi": 56.73
+    },
+    {
+        "timestamp": "2026-02-10T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5003.8,
+        "rsi": 58.19
+    },
+    {
+        "timestamp": "2026-02-20T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5059.3,
+        "rsi": 57.51
+    },
+    {
+        "timestamp": "2026-02-23T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5204.7,
+        "rsi": 61.99
+    },
+    {
+        "timestamp": "2026-02-24T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5155.8,
+        "rsi": 59.71
+    },
+    {
+        "timestamp": "2026-03-02T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5294.4,
+        "rsi": 63.71
+    },
+    {
+        "timestamp": "2026-03-11T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 5167.4,
+        "rsi": 55.26
+    },
+    {
+        "timestamp": "2026-03-16T00:00:00",
+        "ticker": "GC=F",
+        "action": "MSS BEARISH",
+        "price": 4994.0,
+        "rsi": 47.11
+    },
+    {
+        "timestamp": "2026-03-16T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4994.0,
+        "rsi": 47.11
+    },
+    {
+        "timestamp": "2026-03-18T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4889.9,
+        "rsi": 42.51
+    },
+    {
+        "timestamp": "2026-03-19T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4600.7,
+        "rsi": 32.89
+    },
+    {
+        "timestamp": "2026-03-20T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4570.4,
+        "rsi": 32.07
+    },
+    {
+        "timestamp": "2026-03-23T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4404.1,
+        "rsi": 27.95
+    },
+    {
+        "timestamp": "2026-03-24T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4399.3,
+        "rsi": 27.84
+    },
+    {
+        "timestamp": "2026-03-27T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4492.0,
+        "rsi": 37.49
+    },
+    {
+        "timestamp": "2026-04-17T00:00:00",
+        "ticker": "GC=F",
+        "action": "MSS BULLISH",
+        "price": 4857.6,
+        "rsi": 54.72
+    },
+    {
+        "timestamp": "2026-04-23T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4705.1,
+        "rsi": 46.6
+    },
+    {
+        "timestamp": "2026-05-06T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4681.9,
+        "rsi": 49.59
+    },
+    {
+        "timestamp": "2026-05-07T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4699.8,
+        "rsi": 50.63
+    },
+    {
+        "timestamp": "2026-05-08T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bullish FVG",
+        "price": 4720.4,
+        "rsi": 51.87
+    },
+    {
+        "timestamp": "2026-05-19T00:00:00",
+        "ticker": "GC=F",
+        "action": "MSS BEARISH",
+        "price": 4506.3,
+        "rsi": 38.17
+    },
+    {
+        "timestamp": "2026-05-20T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4531.3,
+        "rsi": 40.44
+    },
+    {
+        "timestamp": "2026-05-27T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4447.5,
+        "rsi": 35.17
+    },
+    {
+        "timestamp": "2026-06-08T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4335.9,
+        "rsi": 34.11
+    },
+    {
+        "timestamp": "2026-06-10T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4108.2,
+        "rsi": 24.69
+    },
+    {
+        "timestamp": "2026-06-11T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4090.3,
+        "rsi": 24.12
+    },
+    {
+        "timestamp": "2026-06-19T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4164.6,
+        "rsi": 36.11
+    },
+    {
+        "timestamp": "2025-10-13T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "MSS BEARISH",
+        "price": 130.25,
+        "rsi": 30.64
+    },
+    {
+        "timestamp": "2025-10-14T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 126.86,
+        "rsi": 26.39
+    },
+    {
+        "timestamp": "2025-10-15T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 124.31,
+        "rsi": 23.73
+    },
+    {
+        "timestamp": "2025-12-29T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 106.7,
+        "rsi": 44.61
+    },
+    {
+        "timestamp": "2026-01-16T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 104.64,
+        "rsi": 42.0
+    },
+    {
+        "timestamp": "2026-01-19T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 103.21,
+        "rsi": 39.88
+    },
+    {
+        "timestamp": "2026-02-06T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 104.73,
+        "rsi": 48.58
+    },
+    {
+        "timestamp": "2026-02-16T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 103.11,
+        "rsi": 44.48
+    },
+    {
+        "timestamp": "2026-02-25T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 100.65,
+        "rsi": 40.94
+    },
+    {
+        "timestamp": "2026-03-04T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 99.5,
+        "rsi": 40.87
+    },
+    {
+        "timestamp": "2026-04-01T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "MSS BULLISH",
+        "price": 105.81,
+        "rsi": 62.41
+    },
+    {
+        "timestamp": "2026-04-02T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 108.07,
+        "rsi": 65.72
+    },
+    {
+        "timestamp": "2026-04-06T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 107.15,
+        "rsi": 63.28
+    },
+    {
+        "timestamp": "2026-04-15T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 121.03,
+        "rsi": 75.09
+    },
+    {
+        "timestamp": "2026-04-16T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 128.67,
+        "rsi": 79.9
+    },
+    {
+        "timestamp": "2026-04-17T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 129.84,
+        "rsi": 80.53
+    },
+    {
+        "timestamp": "2026-04-21T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 137.06,
+        "rsi": 83.9
+    },
+    {
+        "timestamp": "2026-05-05T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 137.9,
+        "rsi": 69.81
+    },
+    {
+        "timestamp": "2026-05-18T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "MSS BEARISH",
+        "price": 125.82,
+        "rsi": 46.45
+    },
+    {
+        "timestamp": "2026-05-18T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 125.82,
+        "rsi": 46.45
+    },
+    {
+        "timestamp": "2026-06-01T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 121.21,
+        "rsi": 40.13
+    },
+    {
+        "timestamp": "2026-06-02T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bearish FVG",
+        "price": 115.32,
+        "rsi": 34.6
+    },
+    {
+        "timestamp": "2026-06-09T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "MSS BULLISH",
+        "price": 135.46,
+        "rsi": 57.18
+    },
+    {
+        "timestamp": "2026-06-10T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 140.92,
+        "rsi": 61.63
+    },
+    {
+        "timestamp": "2026-06-11T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 148.62,
+        "rsi": 66.85
+    },
+    {
+        "timestamp": "2026-06-12T00:00:00",
+        "ticker": "AMANTA.NS",
+        "action": "Bullish FVG",
+        "price": 151.82,
+        "rsi": 68.75
+    }
+]
