@@ -3,12 +3,102 @@ import pandas as pd
 import json
 import os
 import plotly.graph_objects as go
+import streamlit.components.v1 as components
 from engine import fetch_data, calculate_ict_indicators, LOG_FILE
+
+def add_print_button():
+    st.markdown("""
+        <style>
+        @media print {
+            [data-testid="stSidebar"], [data-testid="stHeader"], [data-testid="stToolbar"] { display: none !important; }
+            iframe { display: none !important; }
+            .stApp { background-color: white !important; }
+            * { color: black !important; }
+            .main .block-container::before {
+                content: "Hermes Quant Platform - Professional Equity Report";
+                display: block; font-size: 20px; font-weight: bold; text-align: center;
+                margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #333; color: #333 !important;
+            }
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([5, 1])
+    with col2:
+        components.html(
+            """
+            <script>function printDashboard() { window.parent.print(); }</script>
+            <div style="display:flex; justify-content:flex-end;">
+                <button onclick="printDashboard()" style="background-color: #26A69A; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-family: sans-serif; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                    🖨️ Print / Save as PDF
+                </button>
+            </div>
+            <style>
+                body { margin: 0; }
+                button:hover { transform: scale(1.05) !important; box-shadow: 0 6px 12px rgba(38, 166, 154, 0.4) !important; }
+            </style>
+            """,
+            height=45
+        )
 
 st.set_page_config(page_title="Hermes ICT Pro Dashboard", layout="wide", page_icon="📈")
 
-st.title("📈 Hermes ICT Pro Trading Dashboard")
-st.markdown("Institutional Grade Algorithmic Tracking (FVGs, Order Blocks, Liquidity Pools, VWMA).")
+st.markdown("""
+<style>
+.fixed-header {
+    position: sticky;
+    top: 2rem;
+    z-index: 9999;
+    background-color: #111827 !important; /* Deep dark blue/grey */
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    border-bottom: 4px solid #26A69A;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+.fixed-header h1 {
+    color: #FFFFFF !important;
+    margin: 0;
+    padding: 0;
+    font-size: 2.2rem;
+}
+.fixed-header p {
+    color: #94A3B8 !important;
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+}
+/* Ensure the parent container allows sticky elements to work */
+.main .block-container {
+    overflow: visible;
+}
+[data-testid="stMetric"] {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.02);
+}
+[data-testid="stDataFrame"] {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 2px;
+}
+/* Border for Custom Ticker text input in sidebar */
+[data-testid="stSidebar"] [data-testid="stTextInput"] div[data-baseweb="input"] {
+    border: 2px solid #3B82F6 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.4) !important;
+}
+[data-testid="stSidebar"] [data-testid="stTextInput"] div[data-baseweb="input"]:focus-within {
+    border-color: #60A5FA !important;
+    box-shadow: 0 0 12px rgba(96, 165, 250, 0.6) !important;
+}
+</style>
+<div class="fixed-header">
+    <h1>📈 Hermes ICT Pro Trading Dashboard</h1>
+    <p>Institutional Grade Algorithmic Tracking (FVGs, Order Blocks, Liquidity Pools, VWMA).</p>
+</div>
+""", unsafe_allow_html=True)
 
 # Sidebar Configuration
 st.sidebar.header("Configuration")
@@ -45,13 +135,6 @@ if custom_ticker.strip():
 else:
     selected_ticker = selected_dropdown.split(" ")[0] if selected_dropdown else "AAPL"
 
-st.sidebar.markdown("---")
-chart_theme = st.sidebar.radio("Chart Theme", ["Dark", "Light"], index=0)
-days_to_show = st.sidebar.slider("Chart Zoom (Days)", min_value=14, max_value=365, value=90, step=7)
-
-st.sidebar.markdown("---")
-refresh = st.sidebar.button("↻ Refresh Live Data")
-
 @st.cache_data(ttl=60)
 def get_stock_data(ticker, period="1y"):
     df = fetch_data(ticker, period=period, interval="1d")
@@ -71,17 +154,20 @@ def load_logs():
 logs_df = load_logs()
 
 # Create Tabs
-tab1, tab2 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner"])
+tab1, tab2, tab3 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner", "📋 Stock Analysis"])
 
 with tab1:
     with st.spinner(f"Loading institutional data for {selected_ticker}..."):
         df, ict_data = get_stock_data(selected_ticker)
+
+    add_print_button()
 
     if not df.empty:
         latest = df.iloc[-1]
         prev = df.iloc[-2]
         
         # ICT HUD
+        st.markdown(f"<h2 style='margin-bottom: 0px; margin-top: 0px; color: #3B82F6;'>{selected_ticker}</h2>", unsafe_allow_html=True)
         col1, col2, col3, col4 = st.columns(4)
         current_price = latest['Close']
         price_change = current_price - prev['Close']
@@ -104,8 +190,20 @@ with tab1:
         st.markdown("---")
         st.subheader(f"ICT Institutional Analysis - {selected_ticker}")
         
+        # Chart Controls aligned in a row
+        ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1, 2, 1])
+        with ctrl_col1:
+            chart_theme = st.radio("Chart Theme", ["Dark", "Light"], index=0, horizontal=True)
+        with ctrl_col2:
+            days_to_show = st.slider("Chart Zoom (Days)", min_value=14, max_value=365, value=90, step=7)
+        with ctrl_col3:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            refresh = st.button("↻ Refresh Live Data", use_container_width=True)
+            if refresh:
+                st.cache_data.clear()
+        
         fig = go.Figure()
-        fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='OHLC', increasing_line_color='#26A69A', decreasing_line_color='#EF5350'))
+        fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='OHLC', increasing_line_color='#26A69A', decreasing_line_color='#EF5350', showlegend=False))
         fig.add_trace(go.Scatter(x=df.index, y=df['VWMA_50'], line=dict(color='#FF00FF', width=2), name='VWMA Mean'))
         fig.add_trace(go.Scatter(x=df.index, y=df['CH_High'], line=dict(color='#FFDD00', width=1), name='Channel Cap', opacity=0.7))
         fig.add_trace(go.Scatter(x=df.index, y=df['CH_Low'], line=dict(color='#FFDD00', width=1), name='Channel Floor', opacity=0.7))
@@ -130,10 +228,47 @@ with tab1:
         zoom_start = df.index[-safe_days] if safe_days > 0 else df.index[0]
         
         theme_template = "plotly_dark" if chart_theme == "Dark" else "plotly_white"
-        bg_color = "#0e1117" if chart_theme == "Dark" else "#ffffff"
-        grid_color = "#262730" if chart_theme == "Dark" else "#e6e6e6"
+        bg_color = "rgba(0,0,0,0)" # Transparent to show CSS gradient
+        grid_color = "rgba(255,255,255,0.05)" if chart_theme == "Dark" else "rgba(0,0,0,0.05)"
+        
+        # Inject dynamic CSS for chart gradient and border
+        st.markdown(f"""
+        <style>
+        [data-testid="stPlotlyChart"] {{
+            background: {'linear-gradient(180deg, #1e293b 0%, #000000 100%)' if chart_theme == 'Dark' else 'linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%)'};
+            border: 2px solid {'#334155' if chart_theme == 'Dark' else '#cbd5e1'};
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }}
+        </style>
+        """, unsafe_allow_html=True)
 
-        fig.update_layout(xaxis_rangeslider_visible=False, template=theme_template, height=800, plot_bgcolor=bg_color, paper_bgcolor=bg_color, margin=dict(l=0, r=50, t=30, b=0), xaxis=dict(showgrid=True, gridcolor=grid_color, range=[zoom_start, max_date]), yaxis=dict(showgrid=True, gridcolor=grid_color), legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
+        fig.update_layout(
+            xaxis_rangeslider_visible=False,
+            template=theme_template, 
+            height=800, 
+            plot_bgcolor=bg_color, 
+            paper_bgcolor=bg_color, 
+            margin=dict(l=0, r=60, t=20, b=0), 
+            xaxis=dict(
+                showgrid=True, gridcolor=grid_color, griddash='dot', 
+                rangebreaks=[dict(bounds=["sat", "mon"])],
+                range=[zoom_start, max_date],
+                showspikes=True, spikemode='across', spikethickness=1, spikedash='dot', spikecolor='#999999'
+            ), 
+            yaxis=dict(
+                side='right',
+                showgrid=True, gridcolor=grid_color, griddash='dot', 
+                tickformat='.2f',
+                showspikes=True, spikemode='across', spikethickness=1, spikedash='dot', spikecolor='#999999'
+            ), 
+            legend=dict(
+                orientation="v", yanchor="top", y=0.99, xanchor="left", x=0.01, 
+                bgcolor="rgba(0,0,0,0)"
+            ),
+            hovermode='x unified'
+        )
         st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("---")
@@ -213,8 +348,8 @@ with tab1:
                 forecast_text = "📉 **Bearish Continuation:** Market structure is heavily bearish. Price is projected to hunt lower Support levels (Sell-Side Liquidity)."
                 forecast_color = "#FF3366"
 
-        text_color = "#ffffff" if chart_theme == "Dark" else "#000000"
-        st.markdown(f"<div style='padding:15px; border-radius:5px; border-left: 5px solid {forecast_color}; background-color: {bg_color}; color: {text_color}; font-size: 16px; margin-bottom: 20px;'>{forecast_text}</div>", unsafe_allow_html=True)
+        text_color = "#000000" # Forced to black as requested
+        st.markdown(f"<div style='padding:15px; border-radius:5px; border-left: 5px solid {forecast_color}; background-color: rgba(255,255,255,0.9); color: {text_color}; font-size: 16px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>{forecast_text}</div>", unsafe_allow_html=True)
 
         col_sup, col_res = st.columns(2)
         with col_sup:
@@ -317,3 +452,46 @@ with tab2:
                     bearish_list = sorted(bearish_list, key=lambda x: x['RSI'])
                     st.dataframe(pd.DataFrame(bearish_list).drop(columns=['Bias']), use_container_width=True, hide_index=True)
                 else: st.info("No bearish structures found on this page.")
+
+with tab3:
+    st.subheader("📋 Expert Fundamental Analyst")
+    st.markdown("Act as an expert equity research analyst. Enter any stock ticker below to conduct a rigorous, data-driven fundamental analysis using live valuation, profitability, and health metrics.")
+    
+    col_input, col_btn2 = st.columns([2, 1])
+    with col_input:
+        analysis_ticker = st.text_input("Enter Stock Ticker (e.g. RELIANCE.NS, AAPL, INFY.NS):", value="RELIANCE.NS")
+    
+    st.markdown("""
+        <style>
+        /* Add a sleek hover animation to buttons */
+        div.stButton > button {
+            transition: all 0.3s ease-in-out;
+            border-radius: 8px;
+        }
+        div.stButton > button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 5px 15px rgba(38, 166, 154, 0.4);
+            border-color: #26A69A;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    if st.button("Generate Expert Report"):
+        if analysis_ticker:
+            with st.spinner(f"Analyzing {analysis_ticker}... fetching live fundamental data from Yahoo Finance..."):
+                from fundamental import generate_fundamental_report
+                report_md = generate_fundamental_report(analysis_ticker.strip().upper())
+                add_print_button()
+                st.markdown(report_md, unsafe_allow_html=True)
+        else:
+            st.warning("Please enter a ticker symbol.")
+
+st.markdown("---")
+st.markdown(
+    """
+    <div style='text-align: center; color: gray; padding: 10px; font-size: 14px;'>
+        Created by <strong>SUDHIR THIKANE</strong> (<a href="mailto:sudhir.thikane@gmail.com" style="color: #26A69A; text-decoration: none;">sudhir.thikane@gmail.com</a>)
+    </div>
+    """,
+    unsafe_allow_html=True
+)
