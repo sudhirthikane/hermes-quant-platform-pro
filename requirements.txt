@@ -3,3 +3,4 @@ ta
 streamlit
 pandas
 plotly
+streamlit-searchbox
