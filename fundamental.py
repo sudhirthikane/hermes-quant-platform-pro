@@ -24,17 +24,70 @@ def format_num(val):
     if is_invalid(val): return "N/A"
     return f"{val:.2f}"
 
+def get_fundamental_score(ticker_symbol):
+    ticker = yf.Ticker(ticker_symbol)
+    try:
+        info = ticker.info
+    except Exception:
+        info = {}
+    
+    if not info and ("-USD" not in ticker_symbol and "=X" not in ticker_symbol):
+        return 0, "Avoid", 0
+
+    pe = safe_get(info, ['trailingPE', 'forwardPE'], 0)
+    pb = safe_get(info, ['priceToBook'], 0)
+    roe = safe_get(info, ['returnOnEquity'], 0)
+    opm = safe_get(info, ['operatingMargins'], 0)
+    de_ratio = safe_get(info, ['debtToEquity'], 0)
+    if de_ratio > 10: de_ratio = de_ratio / 100.0
+    current_ratio = safe_get(info, ['currentRatio'], 0)
+    rev_growth = safe_get(info, ['revenueGrowth'], 0)
+    fcf = safe_get(info, ['freeCashflow'], 0)
+    insiders = safe_get(info, ['heldPercentInsiders'], 0)
+    institutions = safe_get(info, ['heldPercentInstitutions'], 0)
+
+    score = 0
+    if 0 < pe < 25: score += 1
+    if 0 < pb < 3: score += 1
+    if roe > 0.15: score += 1
+    if opm > 0.10: score += 1
+    if de_ratio < 1.0: score += 1
+    if current_ratio > 1.2: score += 1
+    if rev_growth > 0.10: score += 1
+    if fcf > 0: score += 1
+    if insiders > 0.40: score += 1
+    if institutions > 0.15: score += 1
+
+    if score >= 9: verdict = "Strong BUY"
+    elif score >= 7: verdict = "Accumulate"
+    elif score >= 5: verdict = "HOLD"
+    elif score >= 3: verdict = "SELL"
+    else: verdict = "Avoid"
+    
+    volume = safe_get(info, ['averageVolume', 'volume'], 0)
+    
+    return score, verdict, volume
+
 def generate_fundamental_report(ticker_symbol):
     ticker = yf.Ticker(ticker_symbol)
     try:
         info = ticker.info
     except Exception as e:
-        return f"Error fetching data for {ticker_symbol}: {str(e)}"
+        if "-USD" in ticker_symbol or "-INR" in ticker_symbol or "=X" in ticker_symbol:
+            is_crypto = "-USD" in ticker_symbol or "-INR" in ticker_symbol
+            info = {'longName': ticker_symbol, 'quoteType': 'CRYPTOCURRENCY' if is_crypto else 'CURRENCY'}
+            try:
+                info['regularMarketPrice'] = ticker.fast_info.get('lastPrice', 0)
+                info['marketCap'] = ticker.fast_info.get('marketCap', 0)
+            except:
+                pass
+        else:
+            return f"Error fetching data for {ticker_symbol}: {str(e)}"
     
-    if not info or 'longName' not in info:
+    if not info:
         return f"Could not find valid fundamental data for {ticker_symbol}."
 
-    name = info.get('longName', ticker_symbol)
+    name = info.get('longName', info.get('shortName', ticker_symbol))
     sector = info.get('sector', 'Unknown Sector')
     industry = info.get('industry', 'Unknown Industry')
     exchange = info.get('exchange', 'Unknown Exchange')

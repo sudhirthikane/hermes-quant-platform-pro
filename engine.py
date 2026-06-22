@@ -188,6 +188,54 @@ def write_logs(new_signals):
     with open(LOG_FILE, "w") as f:
         json.dump(logs, f, indent=4)
 
+def analyze_indian_sectors():
+    sectors = {
+        "Nifty Bank": "^NSEBANK",
+        "Nifty IT": "^CNXIT",
+        "Nifty Auto": "^CNXAUTO",
+        "Nifty FMCG": "^CNXFMCG",
+        "Nifty Metal": "^CNXMETAL",
+        "Nifty Pharma": "^CNXPHARMA",
+        "Nifty Energy": "^CNXENERGY",
+        "Nifty Realty": "^CNXREALTY",
+        "Nifty Infra": "^CNXINFRA",
+        "Nifty PSE": "^CNXPSE"
+    }
+    results = []
+    for name, ticker in sectors.items():
+        try:
+            df = yf.download(ticker, period="3mo", interval="1d", progress=False)
+            if df.empty: continue
+            
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.droplevel(1)
+                
+            close_prices = df['Close']
+            
+            if len(close_prices) > 21:
+                ret_1m = (close_prices.iloc[-1] - close_prices.iloc[-21]) / close_prices.iloc[-21] * 100
+            else:
+                ret_1m = 0
+                
+            rsi = ta.momentum.RSIIndicator(close=close_prices, window=14).rsi().iloc[-1]
+            if pd.isna(rsi): rsi = 50
+            
+            # Hermes Trend Score Calculation
+            score = (ret_1m * 3) + (rsi - 50)
+            
+            results.append({
+                "Sector": name,
+                "Return_1M": ret_1m,
+                "RSI": rsi,
+                "TrendScore": score
+            })
+        except Exception:
+            pass
+            
+    # Sort by Score
+    results = sorted(results, key=lambda x: x["TrendScore"], reverse=True)
+    return results
+
 if __name__ == "__main__":
     if os.path.exists(LOG_FILE):
         os.remove(LOG_FILE)

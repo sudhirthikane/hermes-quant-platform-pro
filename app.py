@@ -93,6 +93,36 @@ st.markdown("""
     border-color: #60A5FA !important;
     box-shadow: 0 0 12px rgba(96, 165, 250, 0.6) !important;
 }
+
+/* 📱 Smartphone / Mobile Optimization */
+@media (max-width: 768px) {
+    .fixed-header {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+        position: relative !important; /* Disable sticky on mobile to save screen real estate */
+    }
+    .fixed-header h1 {
+        font-size: 1.5rem !important;
+    }
+    .fixed-header p {
+        font-size: 0.85rem !important;
+    }
+    [data-testid="stMetricValue"] {
+        font-size: 1.2rem !important;
+    }
+    /* Scale down all custom HTML spans that use 24px+ */
+    span[style*="font-size: 26px"], span[style*="font-size: 24px"], h2[style*="font-size: 32px"], h2[style*="font-size: 48px"] {
+        font-size: 20px !important;
+    }
+    /* Reduce gap in flex containers */
+    div[style*="gap: 30px"], div[style*="gap: 20px"] {
+        gap: 15px !important;
+    }
+    /* Adjust padding in custom HTML cards */
+    div[style*="padding: 20px"], div[style*="padding: 25px"] {
+        padding: 12px !important;
+    }
+}
 </style>
 <div class="fixed-header">
     <h1>📈 Hermes ICT Pro Trading Dashboard</h1>
@@ -124,14 +154,43 @@ POPULAR_ASSETS = {
 }
 
 st.sidebar.markdown("**🔍 Asset Selection**")
-asset_options = [""] + [f"{k} ({v})" for k, v in POPULAR_ASSETS.items()]
-selected_dropdown = st.sidebar.selectbox("Search Popular Assets:", asset_options, index=1)
+
+@st.cache_data
+def load_all_tickers():
+    options = []
+    # Add popular first
+    for k, v in POPULAR_ASSETS.items():
+        options.append(f"{k} ({v})")
+    # Add NSE
+    try:
+        import pandas as pd
+        df = pd.read_csv("nse_list.csv")
+        for _, row in df.iterrows():
+            sym = str(row.iloc[0]).strip()
+            name = str(row.iloc[1]).strip()
+            options.append(f"{sym}.NS ({name})")
+    except Exception:
+        pass
+    return options
+
+all_ticker_options = load_all_tickers()
+
+selected_dropdown = st.sidebar.selectbox("Search Asset (Type to autocomplete):", all_ticker_options, index=1)
 
 st.sidebar.markdown("**Or**")
-custom_ticker = st.sidebar.text_input("Enter Custom Ticker (e.g., GOOGL, TATAMOTORS.NS):", value="")
+from streamlit_searchbox import st_searchbox
+def search_asset_sidebar(searchterm: str):
+    return [o for o in all_ticker_options if searchterm.lower() in o.lower()] if searchterm else []
 
-if custom_ticker.strip():
-    selected_ticker = custom_ticker.upper().strip()
+with st.sidebar:
+    custom_ticker = st_searchbox(
+        search_asset_sidebar,
+        key="sidebar_searchbox",
+        placeholder="Enter Custom Ticker..."
+    )
+
+if custom_ticker:
+    selected_ticker = custom_ticker.split(" ")[0].upper()
 else:
     selected_ticker = selected_dropdown.split(" ")[0] if selected_dropdown else "AAPL"
 
@@ -153,9 +212,10 @@ def load_logs():
 
 logs_df = load_logs()
 
-# Create Tabs
-tab1, tab2, tab3 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner", "📋 Stock Analysis"])
+# Set up layout tabs
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner", "🎯 Most Probable B/S", "📋 Stock Analysis", "🧭 Sectorial View", "🛢️ Commodities"])
 
+# --- TAB 1: MAIN DASHBOARD ---
 with tab1:
     with st.spinner(f"Loading institutional data for {selected_ticker}..."):
         df, ict_data = get_stock_data(selected_ticker)
@@ -193,7 +253,7 @@ with tab1:
         # Chart Controls aligned in a row
         ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([1, 2, 1])
         with ctrl_col1:
-            chart_theme = st.radio("Chart Theme", ["Dark", "Light"], index=0, horizontal=True)
+            chart_theme = st.radio("Chart Theme", ["Dark", "Light"], index=1, horizontal=True)
         with ctrl_col2:
             days_to_show = st.slider("Chart Zoom (Days)", min_value=14, max_value=365, value=90, step=7)
         with ctrl_col3:
@@ -454,12 +514,207 @@ with tab2:
                 else: st.info("No bearish structures found on this page.")
 
 with tab3:
+    st.subheader("🎯 Top 10 Most Probable Bullish & Bearish Setups")
+    st.markdown("This engine cross-references the **ICT Technical Scanner** with the **Hermes AI Fundamental Engine** to find the absolute highest probability trades.")
+    
+    col_t1, col_t2 = st.columns(2)
+    with col_t1:
+        st.markdown("### 🤖 Hermes Telegram Integration")
+        bot_token = st.text_input("Telegram Bot Token:", type="password", placeholder="Enter your BotFather Token")
+        chat_id = st.text_input("Channel/Chat ID:", placeholder="e.g. @sudhir_ict_signals or -100123456789")
+    
+    st.markdown("---")
+    
+    col_btn1, col_btn2, col_btn3 = st.columns([2, 2, 1])
+    with col_btn1:
+        analyze_clicked = st.button("🚀 Analyze Top 10 B/S Setups", use_container_width=True)
+    with col_btn2:
+        broadcast_clicked = st.button("📤 Broadcast to Telegram", use_container_width=True)
+    
+    if analyze_clicked:
+        if not os.path.exists("scanner_results.json"):
+            st.warning("No scanner results found! Please run the 'Indian Market Scanner' on at least one page first.")
+        else:
+            with st.spinner("Crunching fundamental data for the Top 20 ICT Setups... This takes about 10 seconds..."):
+                try:
+                    with open("scanner_results.json", "r") as f:
+                        scan_data = json.load(f)
+                    
+                    bullish_raw = scan_data.get("bullish", [])
+                    bearish_raw = scan_data.get("bearish", [])
+                    
+                    from fundamental import get_fundamental_score
+                    
+                    def enrich_list(raw_list, req_count=10):
+                        enriched = []
+                        for item in raw_list:
+                            if len(enriched) >= req_count:
+                                break
+                            
+                            # Filter 1: Price > 55
+                            if item.get("Price", 0) <= 55:
+                                continue
+                                
+                            ticker = item["Ticker"]
+                            if not ticker.endswith(".NS") and not ticker.endswith(".BO"):
+                                ticker += ".NS"
+                                
+                            score, verdict, volume = get_fundamental_score(ticker)
+                            
+                            # Filter 2: Volume > 300,000
+                            if volume <= 300000:
+                                continue
+                            
+                            # Determine emoji based on verdict
+                            verdict_clean = verdict.replace("Strong ", "")
+                            v_emoji = "🟢" if "BUY" in verdict_clean or "Accumulate" in verdict_clean else "🔴" if "SELL" in verdict_clean else "⚪"
+                                
+                            enriched.append({
+                                "Ticker": item["Ticker"],
+                                "Price": item.get("Price", "N/A"),
+                                "ICT Bias": item["Bias"],
+                                "RSI": item["RSI"],
+                                "Vol (K)": f"{volume/1000:.0f}K",
+                                "Fund. Score": f"{score}/10",
+                                "AI Verdict": f"{v_emoji} {verdict}"
+                            })
+                        return enriched
+                        
+                    bullish_final = enrich_list(bullish_raw, 10)
+                    bearish_final = enrich_list(bearish_raw, 10)
+                        
+                    st.session_state['bullish_final'] = bullish_final
+                    st.session_state['bearish_final'] = bearish_final
+                    
+                except Exception as e:
+                    st.error(f"An error occurred during analysis: {e}")
+
+    # Display results if they exist in session state
+    if 'bullish_final' in st.session_state and 'bearish_final' in st.session_state:
+        bullish_final = st.session_state['bullish_final']
+        bearish_final = st.session_state['bearish_final']
+        
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            st.success(f"📈 **Top {len(bullish_final)} Bullish Candidates**")
+            if bullish_final:
+                st.dataframe(pd.DataFrame(bullish_final), use_container_width=True, hide_index=True)
+            else:
+                st.info("No bullish candidates found in scanner results.")
+                
+        with col_b2:
+            st.error(f"📉 **Top {len(bearish_final)} Bearish Candidates**")
+            if bearish_final:
+                st.dataframe(pd.DataFrame(bearish_final), use_container_width=True, hide_index=True)
+            else:
+                st.info("No bearish candidates found in scanner results.")
+                
+        # --- PDF Download Generation ---
+        def generate_pdf_bytes(bullish, bearish):
+            import tempfile, os
+            try:
+                from fpdf import FPDF
+            except ImportError:
+                return None
+            from datetime import datetime
+            current_date = datetime.now().strftime("%B %d, %Y | %H:%M")
+
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", 'B', 16)
+            pdf.cell(190, 10, txt="Hermes ICT Pro - Top 10 B/S Setups", ln=True, align='C')
+            
+            pdf.set_font("Arial", 'I', 10)
+            pdf.set_text_color(100, 100, 100) # grey color
+            pdf.cell(190, 6, txt=f"Generated on: {current_date}", ln=True, align='C')
+            pdf.set_text_color(0, 0, 0) # reset
+            pdf.ln(5)
+            def draw_table(title, data, is_bullish):
+                pdf.set_font("Arial", 'B', 14)
+                if is_bullish:
+                    pdf.set_text_color(0, 128, 0) # Dark Green
+                else:
+                    pdf.set_text_color(200, 0, 0) # Dark Red
+                    
+                pdf.cell(190, 10, txt=title, ln=True, align='L')
+                pdf.set_text_color(0, 0, 0) # Reset to black
+                pdf.ln(2)
+                
+                # Table Headers
+                pdf.set_font("Arial", 'B', 10)
+                pdf.set_fill_color(240, 240, 240)
+                headers = ['Ticker', 'Price', 'RSI', 'Vol (K)', 'Score', 'Verdict']
+                widths = [35, 25, 20, 25, 20, 65]
+                
+                for i in range(len(headers)):
+                    pdf.cell(widths[i], 8, txt=headers[i], border=1, align='C', fill=True)
+                pdf.ln()
+                
+                # Table Rows
+                pdf.set_font("Arial", '', 10)
+                for row in data:
+                    pdf.cell(widths[0], 8, txt=str(row.get('Ticker', '')), border=1, align='C')
+                    pdf.cell(widths[1], 8, txt=str(row.get('Price', '')), border=1, align='C')
+                    pdf.cell(widths[2], 8, txt=str(row.get('RSI', '')), border=1, align='C')
+                    pdf.cell(widths[3], 8, txt=str(row.get('Vol (K)', '')), border=1, align='C')
+                    pdf.cell(widths[4], 8, txt=str(row.get('Fund. Score', '')), border=1, align='C')
+                    
+                    verdict = str(row.get('AI Verdict', ''))
+                    verdict = verdict.encode('ascii', 'ignore').decode('ascii').strip()
+                    pdf.cell(widths[5], 8, txt=verdict, border=1, align='C')
+                    pdf.ln()
+                pdf.ln(10)
+
+            draw_table("Top Bullish Candidates", bullish, True)
+            draw_table("Top Bearish Candidates", bearish, False)
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                pdf.output(tmp.name)
+                with open(tmp.name, "rb") as f: data = f.read()
+            os.unlink(tmp.name)
+            return data
+
+        pdf_data = generate_pdf_bytes(bullish_final, bearish_final)
+        with col_btn3:
+            if pdf_data:
+                st.download_button(label="📥 Download PDF", data=pdf_data, file_name="Hermes_Top_10_Setups.pdf", mime="application/pdf", use_container_width=True)
+            else:
+                st.button("📥 Download PDF", disabled=True, help="Installing PDF tools in background...", use_container_width=True)
+
+        if broadcast_clicked:
+            if not bot_token or not chat_id:
+                st.error("Please enter your Telegram Bot Token and Chat ID to broadcast.")
+            else:
+                from telegram_utils import format_telegram_message, send_telegram_message
+                msg_text = format_telegram_message(bullish_final, bearish_final)
+                success, resp = send_telegram_message(bot_token, chat_id, msg_text)
+                if success:
+                    st.balloons()
+                    st.success("✅ " + resp)
+                else:
+                    st.error("❌ " + resp)
+
+with tab4:
     st.subheader("📋 Expert Fundamental Analyst")
     st.markdown("Act as an expert equity research analyst. Enter any stock ticker below to conduct a rigorous, data-driven fundamental analysis using live valuation, profitability, and health metrics.")
     
     col_input, col_btn2 = st.columns([2, 1])
     with col_input:
-        analysis_ticker = st.text_input("Enter Stock Ticker (e.g. RELIANCE.NS, AAPL, INFY.NS):", value="RELIANCE.NS")
+        analysis_ticker_raw = st.selectbox("Search Asset (Type to autocomplete):", all_ticker_options, index=0)
+        st.markdown("**Or**")
+        from streamlit_searchbox import st_searchbox
+        def search_asset_expert(searchterm: str):
+            return [o for o in all_ticker_options if searchterm.lower() in o.lower()] if searchterm else []
+            
+        custom_analysis_ticker = st_searchbox(
+            search_asset_expert,
+            key="expert_searchbox",
+            placeholder="Enter Custom Ticker..."
+        )
+        
+        if custom_analysis_ticker:
+            analysis_ticker = custom_analysis_ticker.split(" ")[0].upper()
+        else:
+            analysis_ticker = analysis_ticker_raw.split(" ")[0] if analysis_ticker_raw else "RELIANCE.NS"
     
     st.markdown("""
         <style>
@@ -485,6 +740,204 @@ with tab3:
                 st.markdown(report_md, unsafe_allow_html=True)
         else:
             st.warning("Please enter a ticker symbol.")
+
+with tab5:
+    st.subheader("🧭 Hermes AI Sectorial View")
+    st.markdown("Visualizing the flow of institutional liquidity across major Indian sectors. Colored from **Pastel Green (Trending)** to **Pastel Red (Distribution)** based on the Hermes Trend Score.")
+    
+    if st.button("Generate Sector Heatmap", use_container_width=True):
+        with st.spinner("Analyzing top 10 NSE Sectors... This pulls live data and may take 5-10 seconds."):
+            try:
+                from engine import analyze_indian_sectors
+                sector_data = analyze_indian_sectors()
+                if sector_data:
+                    st.session_state['sector_data'] = sector_data
+                else:
+                    st.error("Failed to fetch sector data from Yahoo Finance.")
+            except Exception as e:
+                st.error(f"Error fetching data: {e}")
+
+    if 'sector_data' in st.session_state:
+        try:
+            import plotly.express as px
+            import pandas as pd
+            
+            df_sectors = pd.DataFrame(st.session_state['sector_data'])
+            df_sectors['SliceSize'] = 1
+            
+            # Use bar_polar since pie does not support color_continuous_scale
+            fig = px.bar_polar(
+                df_sectors,
+                r='SliceSize',
+                theta='Sector',
+                color='TrendScore',
+                color_continuous_scale='RdYlGn',
+                hover_data=["TrendScore", "Return_1M", "RSI"]
+            )
+            
+            fig.update_traces(
+                hovertemplate="<b>%{theta}</b><br>Hermes Score: %{customdata[0]:.2f}<br>1M Return: %{customdata[1]:.2f}%<br>RSI: %{customdata[2]:.2f}<extra></extra>"
+            )
+            
+            fig.update_layout(
+                polar=dict(
+                    radialaxis=dict(showticklabels=False, ticks='', showgrid=False),
+                    hole=0.4
+                ),
+                showlegend=False,
+                margin=dict(t=20, b=20, l=20, r=20),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                coloraxis_colorbar=dict(title="Trend Score")
+            )
+            
+            st.plotly_chart(fig, use_container_width=True)
+            
+            st.markdown("### 📊 Raw Sector Metrics")
+            
+            # Color coding the dataframe
+            def color_score(val):
+                if val >= 15: return 'color: #2ecc71; font-weight: bold;' # Light Green
+                elif val >= 0: return 'color: #27ae60;' # Dark Green
+                elif val <= -15: return 'color: #e74c3c; font-weight: bold;' # Light Red
+                else: return 'color: #c0392b;' # Dark Red
+                
+            display_df = df_sectors[['Sector', 'TrendScore', 'Return_1M', 'RSI']].sort_values('TrendScore', ascending=False)
+            styled_df = (display_df.style
+                .applymap(color_score, subset=['TrendScore'])
+                .format({'TrendScore': "{:.2f}", 'Return_1M': "{:.2f}%", 'RSI': "{:.2f}"})
+                .set_properties(**{'text-align': 'right'})
+            )
+            st.dataframe(styled_df, hide_index=True, use_container_width=True)
+
+            # Intelligent Summary
+            st.markdown("### 🧠 Hermes AI Sector Intelligence")
+            for _, row in display_df.iterrows():
+                sector = row['Sector']
+                score = row['TrendScore']
+                ret = row['Return_1M']
+                rsi = row['RSI']
+                
+                
+                # Custom CSS styling for the cards
+                base_style = "padding: 15px; border-radius: 8px; box-shadow: 0px 4px 12px rgba(0,0,0,0.3); margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);"
+                
+                if score >= 15:
+                    verdict = "🟢 STRONGLY BULLISH"
+                    summary = f"Institutional liquidity is aggressively flowing into **{sector}**. With an impressive **{ret:.2f}%** monthly return and high momentum (RSI: **{rsi:.1f}**), this sector is clearly leading the broader market. Pullbacks present high-probability buying opportunities."
+                    card_style = f"{base_style} border-left: 5px solid #2ecc71; background-color: rgba(46, 204, 113, 0.1);"
+                elif score >= 0:
+                    verdict = "🟢 ACCUMULATION"
+                    summary = f"**{sector}** is showing positive underlying strength. A modest **{ret:.2f}%** return combined with stable momentum suggests steady institutional accumulation. The sector is absorbing supply and preparing for continuation."
+                    card_style = f"{base_style} border-left: 5px solid #3498db; background-color: rgba(52, 152, 219, 0.1);"
+                elif score <= -15:
+                    verdict = "🔴 STRONGLY BEARISH"
+                    summary = f"Severe distribution detected in **{sector}**. A harsh **{ret:.2f}%** drop and deeply weak momentum (RSI: **{rsi:.1f}**) indicates heavy institutional offloading. Avoid long positions until structural breaks are observed."
+                    card_style = f"{base_style} border-left: 5px solid #e74c3c; background-color: rgba(231, 76, 60, 0.1);"
+                else:
+                    verdict = "🔴 DISTRIBUTION / CHOP"
+                    summary = f"**{sector}** is currently facing headwinds. Negative returns (**{ret:.2f}%**) and lagging momentum suggest the sector is out of favor. Liquidity is likely rotating out of this sector and into stronger ones."
+                    card_style = f"{base_style} border-left: 5px solid #f1c40f; background-color: rgba(241, 196, 15, 0.1);"
+
+                html_content = f'''
+                <div style="{card_style}">
+                    <h4 style="margin-top: 0px; margin-bottom: 10px; font-size: 16px;">{verdict} | {sector} <span style="font-size:14px; opacity: 0.7;">(Score: {score:.1f})</span></h4>
+                    <p style="margin-bottom: 0px; font-size: 14px; line-height: 1.5;">{summary}</p>
+                </div>
+                '''
+                st.markdown(html_content, unsafe_allow_html=True)
+
+        except Exception as e:
+            st.error(f"Error generating sectorial view: {e}")
+
+with tab6:
+    st.subheader("🛢️ Commodities Expert Signals (ICT)")
+    st.markdown("Live algorithmic analysis for Gold, Silver, Crude Oil, and Natural Gas using Smart Money Concepts (FVG, Order Blocks) to map institutional liquidity zones.")
+    
+    commodities = {
+        "Gold": "GC=F",
+        "Silver": "SI=F",
+        "Crude Oil (WTI)": "CL=F",
+        "Natural Gas": "NG=F"
+    }
+    
+    if st.button("Generate Expert Commodities Report", use_container_width=True):
+        with st.spinner("Scanning Global Commodities Data..."):
+            for comm_name, comm_ticker in commodities.items():
+                try:
+                    df_comm, ict_data = get_stock_data(comm_ticker, period="6mo")
+                except Exception as e:
+                    st.error(f"Failed to fetch data for {comm_name} ({comm_ticker}).")
+                    continue
+                    
+                if df_comm is None or df_comm.empty:
+                    st.error(f"Failed to fetch data for {comm_name} ({comm_ticker}).")
+                    continue
+                
+                current_price = df_comm['Close'].iloc[-1]
+                
+                fvgs = ict_data.get('fvg', [])
+                obs = ict_data.get('ob', [])
+                
+                buy_price = 0
+                for fvg in fvgs:
+                    if fvg['type'] == 'Bull FVG' and fvg['top'] < current_price:
+                        if fvg['top'] > buy_price: buy_price = fvg['top']
+                
+                for ob in obs:
+                    if ob['type'] == 'Bull OB' and ob['top'] < current_price:
+                        if ob['top'] > buy_price: buy_price = ob['top']
+                        
+                sell_price = float('inf')
+                for fvg in fvgs:
+                    if fvg['type'] == 'Bear FVG' and fvg['bot'] > current_price:
+                        if fvg['bot'] < sell_price: sell_price = fvg['bot']
+                
+                for ob in obs:
+                    if ob['type'] == 'Bear OB' and ob['bot'] > current_price:
+                        if ob['bot'] < sell_price: sell_price = ob['bot']
+                        
+                if sell_price == float('inf'):
+                    sell_price = current_price * 1.05 # default resistance
+                if buy_price == 0:
+                    buy_price = current_price * 0.95
+                    
+                trend_verdict = "🟢 STRONGLY BULLISH" if current_price > df_comm['Close'].rolling(50).mean().iloc[-1] else "🔴 STRONGLY BEARISH"
+                
+                buy_dist_pct = ((current_price - buy_price) / current_price) * 100 if current_price else 0
+                sell_dist_pct = ((sell_price - current_price) / current_price) * 100 if current_price else 0
+                rr_ratio = (sell_price - current_price) / (current_price - buy_price) if (current_price - buy_price) > 0 else 0
+
+                if trend_verdict.startswith("🟢"):
+                    bias_desc = "Primary institutional bias remains <b style='color:#2ecc71;'>BULLISH</b>. Buy-side liquidity is in control."
+                    action_desc = "Wait for a retracement into the discount array."
+                else:
+                    bias_desc = "Primary institutional bias remains <b style='color:#e74c3c;'>BEARISH</b>. Sell programs are dominating the tape."
+                    action_desc = "Seek premium arrays for high-probability short entries."
+                    
+                # Render UI box for the commodity
+                base_style = "padding: 20px; border-radius: 10px; box-shadow: 0px 8px 24px rgba(0,0,0,0.4); margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08);"
+                if trend_verdict.startswith("🟢"):
+                    card_style = f"{base_style} border-left: 6px solid #2ecc71; background-color: rgba(46, 204, 113, 0.05);"
+                else:
+                    card_style = f"{base_style} border-left: 6px solid #e74c3c; background-color: rgba(231, 76, 60, 0.05);"
+
+                html_content = f"""<div style="{card_style}">
+<h4 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px; letter-spacing: 0.5px;">{comm_name} <span style="font-size:14px; opacity: 0.6; font-weight: normal;">({comm_ticker})</span></h4>
+<div style="display: flex; gap: 30px; margin-bottom: 20px; flex-wrap: wrap; background: rgba(128,128,128,0.1); padding: 15px; border-radius: 8px;">
+<div><span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">Live Price</span><br><span style="font-size: 26px; font-weight: 800; font-family: monospace;">${current_price:.2f}</span></div>
+<div><span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">Optimal Buy Zone</span><br><span style="font-size: 26px; font-weight: 800; color: #2ecc71; font-family: monospace;">${buy_price:.2f}</span></div>
+<div><span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">Optimal Sell Zone</span><br><span style="font-size: 26px; font-weight: 800; color: #e74c3c; font-family: monospace;">${sell_price:.2f}</span></div>
+</div>
+<h5 style="margin-top: 0; margin-bottom: 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">🧠 Hermes Expert Trader AI Analysis</h5>
+<ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+<li><b>Market Context:</b> {bias_desc} Current live pricing is hovering at <b>${current_price:.2f}</b>.</li>
+<li><b>Demand Zone (Buy):</b> A high-probability institutional order block/FVG rests at <b>${buy_price:.2f}</b> (<i>{buy_dist_pct:.1f}% below live price</i>). {action_desc if trend_verdict.startswith("🟢") else "This is the primary downside target."}</li>
+<li><b>Supply Zone (Sell):</b> Unmitigated sell-side liquidity rests at <b>${sell_price:.2f}</b> (<i>{sell_dist_pct:.1f}% above live price</i>). {action_desc if not trend_verdict.startswith("🟢") else "This serves as the primary upside take-profit objective."}</li>
+<li><b>Risk-to-Reward Ratio:</b> Entering a long position at the current live price to target supply, while invalidating below demand, offers an implied R:R of <b>{rr_ratio:.2f}x</b>.</li>
+</ul>
+</div>"""
+                st.markdown(html_content, unsafe_allow_html=True)
 
 st.markdown("---")
 st.markdown(
