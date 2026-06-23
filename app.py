@@ -837,7 +837,7 @@ with tab5:
             display_df = display_df[['Sector', 'Star Ratings', 'TrendScore', 'Return_1M', 'RSI']]
             
             styled_df = (display_df.style
-                .applymap(color_score, subset=['TrendScore'])
+                .map(color_score, subset=['TrendScore'])
                 .format({'TrendScore': "{:.2f}", 'Return_1M': "{:.2f}%", 'RSI': "{:.2f}"})
                 .set_properties(**{'text-align': 'right'})
             )
