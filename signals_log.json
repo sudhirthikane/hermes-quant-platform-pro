@@ -4149,5 +4149,19 @@
         "action": "Bullish FVG",
         "price": 3.29,
         "rsi": 68.09
+    },
+    {
+        "timestamp": "2026-06-23T00:00:00",
+        "ticker": "GC=F",
+        "action": "Bearish FVG",
+        "price": 4133.1,
+        "rsi": 34.71
+    },
+    {
+        "timestamp": "2026-06-23T00:00:00",
+        "ticker": "SI=F",
+        "action": "Bearish FVG",
+        "price": 62.35,
+        "rsi": 32.58
     }
 ]

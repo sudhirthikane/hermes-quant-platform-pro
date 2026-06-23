@@ -45,28 +45,41 @@ st.set_page_config(page_title="Hermes ICT Pro Dashboard", layout="wide", page_ic
 
 st.markdown("""
 <style>
+.block-container {
+    padding-top: 5rem !important;
+}
 .fixed-header {
-    position: sticky;
-    top: 2rem;
-    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4rem;
+    z-index: 99999;
     background-color: #111827 !important; /* Deep dark blue/grey */
-    padding: 1.5rem 2rem;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     border-bottom: 4px solid #26A69A;
-    margin-bottom: 2rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 .fixed-header h1 {
     color: #FFFFFF !important;
     margin: 0;
     padding: 0;
-    font-size: 2.2rem;
+    font-size: 1.4rem !important;
+    line-height: 1.2;
 }
 .fixed-header p {
     color: #94A3B8 !important;
     margin: 0;
     padding: 0;
-    font-size: 1rem;
+    font-size: 0.75rem !important;
+}
+[data-testid="stHeader"] {
+    background: transparent !important;
+    z-index: 100000 !important; /* Keep Streamlit UI elements clickable */
 }
 /* Ensure the parent container allows sticky elements to work */
 .main .block-container {
@@ -94,18 +107,25 @@ st.markdown("""
     box-shadow: 0 0 12px rgba(96, 165, 250, 0.6) !important;
 }
 
+/* Sidebar Toggle Icons (keyboard_double_arrow_left/right) */
+[data-testid="collapsedControl"] svg,
+[data-testid="stSidebarCollapseButton"] svg {
+    color: #10B981 !important;
+    fill: #10B981 !important;
+    stroke: #10B981 !important;
+}
+
 /* 📱 Smartphone / Mobile Optimization */
 @media (max-width: 768px) {
     .fixed-header {
-        padding: 1rem !important;
-        margin-bottom: 1rem !important;
-        position: relative !important; /* Disable sticky on mobile to save screen real estate */
+        position: fixed !important;
+        padding-left: 1rem !important;
     }
     .fixed-header h1 {
-        font-size: 1.5rem !important;
+        font-size: 1.1rem !important;
     }
     .fixed-header p {
-        font-size: 0.85rem !important;
+        font-size: 0.65rem !important;
     }
     [data-testid="stMetricValue"] {
         font-size: 1.2rem !important;
@@ -782,6 +802,7 @@ with tab5:
             fig.update_layout(
                 polar=dict(
                     radialaxis=dict(showticklabels=False, ticks='', showgrid=False),
+                    angularaxis=dict(tickfont=dict(size=14, color='#000000')),
                     hole=0.4
                 ),
                 showlegend=False,
@@ -802,13 +823,25 @@ with tab5:
                 elif val <= -15: return 'color: #e74c3c; font-weight: bold;' # Light Red
                 else: return 'color: #c0392b;' # Dark Red
                 
+            def get_star_rating(score):
+                if score >= 15: return '⭐⭐⭐⭐⭐'
+                elif score >= 5: return '⭐⭐⭐⭐'
+                elif score >= -5: return '⭐⭐⭐'
+                elif score >= -15: return '⭐⭐'
+                else: return '⭐'
+                
             display_df = df_sectors[['Sector', 'TrendScore', 'Return_1M', 'RSI']].sort_values('TrendScore', ascending=False)
+            display_df['Star Ratings'] = display_df['TrendScore'].apply(get_star_rating)
+            
+            # Reorder columns
+            display_df = display_df[['Sector', 'Star Ratings', 'TrendScore', 'Return_1M', 'RSI']]
+            
             styled_df = (display_df.style
                 .applymap(color_score, subset=['TrendScore'])
                 .format({'TrendScore': "{:.2f}", 'Return_1M': "{:.2f}%", 'RSI': "{:.2f}"})
                 .set_properties(**{'text-align': 'right'})
             )
-            st.dataframe(styled_df, hide_index=True, use_container_width=True)
+            st.dataframe(styled_df, hide_index=True, use_container_width=False)
 
             # Intelligent Summary
             st.markdown("### 🧠 Hermes AI Sector Intelligence")
