@@ -116,6 +116,16 @@ def calculate_ict_indicators(ticker: str, df: pd.DataFrame, generate_logs=False)
                 b['active'] = False
                 b['end'] = dates[i]
                 
+        # Check active status of OBs
+        for ob in ob_boxes:
+            if not ob.get('active', True): continue
+            if ob['type'] == 'Bull OB' and close_arr[i] < ob['bot']:
+                ob['active'] = False
+                ob['end'] = dates[i]
+            elif ob['type'] == 'Bear OB' and close_arr[i] > ob['top']:
+                ob['active'] = False
+                ob['end'] = dates[i]
+                
         atr_val = atr_arr[i]
         if not np.isnan(atr_val):
             bull_disp = close_arr[i] > open_arr[i] and (close_arr[i] - open_arr[i]) > (atr_val * 2.0) and close_arr[i] > high_arr[i-1] and dynamic_bull_bias
@@ -128,7 +138,24 @@ def calculate_ict_indicators(ticker: str, df: pd.DataFrame, generate_logs=False)
                         if last_bull_ob_idx is None or (i-j) > last_bull_ob_idx:
                             top = max(open_arr[i-j], close_arr[i-j])
                             bot = min(open_arr[i-j], close_arr[i-j])
-                            ob_boxes.append({'type': 'Bull OB', 'start': dates[i-j], 'top': top, 'bot': bot})
+                            
+                            # Check if it was already mitigated before being identified
+                            mitigated = False
+                            end_date = None
+                            for k in range(i-j + 1, i + 1):
+                                if close_arr[k] < bot:
+                                    mitigated = True
+                                    end_date = dates[k]
+                                    break
+                                    
+                            ob_boxes.append({
+                                'type': 'Bull OB', 
+                                'start': dates[i-j], 
+                                'top': top, 
+                                'bot': bot, 
+                                'active': not mitigated,
+                                'end': end_date
+                            })
                             last_bull_ob_idx = i-j
                             signals.append({'timestamp': dates[i], 'ticker': ticker, 'action': 'Bull OB Long', 'price': close_arr[i], 'rsi': rsi_arr[i]})
                             break
@@ -140,7 +167,24 @@ def calculate_ict_indicators(ticker: str, df: pd.DataFrame, generate_logs=False)
                         if last_bear_ob_idx is None or (i-j) > last_bear_ob_idx:
                             top = max(open_arr[i-j], close_arr[i-j])
                             bot = min(open_arr[i-j], close_arr[i-j])
-                            ob_boxes.append({'type': 'Bear OB', 'start': dates[i-j], 'top': top, 'bot': bot})
+                            
+                            # Check if it was already mitigated before being identified
+                            mitigated = False
+                            end_date = None
+                            for k in range(i-j + 1, i + 1):
+                                if close_arr[k] > top:
+                                    mitigated = True
+                                    end_date = dates[k]
+                                    break
+                                    
+                            ob_boxes.append({
+                                'type': 'Bear OB', 
+                                'start': dates[i-j], 
+                                'top': top, 
+                                'bot': bot, 
+                                'active': not mitigated,
+                                'end': end_date
+                            })
                             last_bear_ob_idx = i-j
                             signals.append({'timestamp': dates[i], 'ticker': ticker, 'action': 'Bear OB Short', 'price': close_arr[i], 'rsi': rsi_arr[i]})
                             break

@@ -5,21 +5,30 @@ import os
 import plotly.graph_objects as go
 import streamlit.components.v1 as components
 from engine import fetch_data, calculate_ict_indicators, LOG_FILE
+from backtester import run_backtest
 
-def add_print_button():
-    st.markdown("""
+def add_print_button(report_title="Professional Equity Report"):
+    from datetime import datetime
+    current_time_str = datetime.now().strftime("%d-%b-%Y %I:%M %p")
+    st.markdown(f"""
+        <div class="print-only-header" style="display: none;">
+            <div style="font-size: 22px; font-weight: bold; text-align: center; color: #111; font-family: 'Inter', sans-serif;">
+                Hermes Quant Platform - {report_title}
+            </div>
+            <div style="font-size: 12px; text-align: right; color: #555; margin-top: 5px; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 20px; font-family: 'Inter', sans-serif;">
+                Report Generated: {current_time_str}
+            </div>
+        </div>
         <style>
-        @media print {
-            [data-testid="stSidebar"], [data-testid="stHeader"], [data-testid="stToolbar"] { display: none !important; }
-            iframe { display: none !important; }
-            .stApp { background-color: white !important; }
-            * { color: black !important; }
-            .main .block-container::before {
-                content: "Hermes Quant Platform - Professional Equity Report";
-                display: block; font-size: 20px; font-weight: bold; text-align: center;
-                margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #333; color: #333 !important;
-            }
-        }
+        @media print {{
+            .print-only-header {{
+                display: block !important;
+            }}
+            [data-testid="stSidebar"], [data-testid="stHeader"], [data-testid="stToolbar"] {{ display: none !important; }}
+            iframe {{ display: none !important; }}
+            .stApp {{ background-color: white !important; }}
+            * {{ color: black !important; }}
+        }}
         </style>
     """, unsafe_allow_html=True)
     
@@ -173,6 +182,27 @@ POPULAR_ASSETS = {
     "CL=F": "Crude Oil Futures"
 }
 
+SECTOR_INDICES = {
+    "^NSEI": "Nifty 50 Index",
+    "^NSMIDCP": "Nifty Next 50 Index",
+    "^NSEBANK": "Nifty Bank Index",
+    "^CNXIT": "Nifty IT Index",
+    "^CNXAUTO": "Nifty Auto Index",
+    "^CNXFMCG": "Nifty FMCG Index",
+    "^CNXMETAL": "Nifty Metal Index",
+    "^CNXPHARMA": "Nifty Pharma Index",
+    "^CNXREALTY": "Nifty Realty Index",
+    "^CNXFIN": "Nifty Financial Services Index",
+    "^CNXMEDIA": "Nifty Media Index",
+    "^CNXINFRA": "Nifty Infrastructure Index",
+    "^NSEMDCP50": "Nifty Midcap 50 Index",
+    "^CNXSC": "Nifty Smallcap 100 Index",
+    "^CNXENERGY": "Nifty Energy Index",
+    "^CNXPSE": "Nifty PSE Index",
+    "^CNXMNC": "Nifty MNC Index",
+    "^CNXSERVICE": "Nifty Service Sector Index"
+}
+
 st.sidebar.markdown("**🔍 Asset Selection**")
 
 @st.cache_data
@@ -180,6 +210,9 @@ def load_all_tickers():
     options = []
     # Add popular first
     for k, v in POPULAR_ASSETS.items():
+        options.append(f"{k} ({v})")
+    # Add sector indices
+    for k, v in SECTOR_INDICES.items():
         options.append(f"{k} ({v})")
     # Add NSE
     try:
@@ -208,15 +241,74 @@ with st.sidebar:
         key="sidebar_searchbox",
         placeholder="Enter Custom Ticker..."
     )
+    
+    st.markdown("---")
+    st.markdown("**🎯 Most Probable Setups Settings**")
+    scan_interval = st.selectbox(
+        "Setups Scan Timeframe", 
+        ["1h", "1d"], 
+        index=0, 
+        key="setups_timeframe_select"
+    )
+    
+    st.markdown("**🤖 Telegram Integration**")
+    bot_token = st.text_input(
+        "Telegram Bot Token", 
+        type="password", 
+        placeholder="Enter Bot Token",
+        key="setups_telegram_token"
+    )
+    chat_id = st.text_input(
+        "Telegram Chat ID", 
+        placeholder="e.g. @sudhir_ict_signals",
+        key="setups_telegram_chat"
+    )
+    
+    if st.button("🔌 Test Connection", use_container_width=True):
+        if not bot_token or not chat_id:
+            st.sidebar.error("Enter Bot Token and Chat ID first!")
+        else:
+            with st.spinner("Testing..."):
+                from telegram_utils import send_telegram_message
+                success, resp = send_telegram_message(
+                    bot_token, 
+                    chat_id, 
+                    "🤖 *Hermes AI Engine*\n\nConnection test successful! Telegram integration is fully functional. 🚀"
+                )
+                if success:
+                    st.sidebar.success("✅ Connection Successful!")
+                else:
+                    st.sidebar.error(resp)
 
+# Initialize session state for ticker persistence to prevent custom searchbox state loss on foreign reruns
+if 'active_ticker' not in st.session_state:
+    default_ticker = selected_dropdown.split(" ")[0].upper() if selected_dropdown else "AAPL"
+    st.session_state['active_ticker'] = default_ticker
+    st.session_state['active_ticker_source'] = "dropdown"
+    st.session_state['last_dropdown_val'] = default_ticker
+
+# Detect if the custom searchbox returned a value (user typed/selected a custom asset)
 if custom_ticker:
-    selected_ticker = custom_ticker.split(" ")[0].upper()
+    new_ticker = custom_ticker.split(" ")[0].upper()
+    if st.session_state.get('active_ticker') != new_ticker:
+        st.session_state['active_ticker'] = new_ticker
+        st.session_state['active_ticker_source'] = "custom"
 else:
-    selected_ticker = selected_dropdown.split(" ")[0] if selected_dropdown else "AAPL"
+    # custom_ticker is None/empty (either cleared or returned None during a rerun of a different tab)
+    dropdown_ticker = selected_dropdown.split(" ")[0].upper() if selected_dropdown else "AAPL"
+    
+    # If the user changed the native selectbox dropdown explicitly, update active ticker
+    if st.session_state.get('last_dropdown_val') != dropdown_ticker:
+        st.session_state['active_ticker'] = dropdown_ticker
+        st.session_state['active_ticker_source'] = "dropdown"
+        st.session_state['last_dropdown_val'] = dropdown_ticker
+
+selected_ticker = st.session_state['active_ticker']
 
 @st.cache_data(ttl=60)
-def get_stock_data(ticker, period="1y"):
-    df = fetch_data(ticker, period=period, interval="1d")
+def get_stock_data(ticker, period="1y", interval="1d"):
+    chart_period = "1mo" if interval == "1h" else period
+    df = fetch_data(ticker, period=chart_period, interval=interval)
     df, ict_data = calculate_ict_indicators(ticker, df, generate_logs=True)
     return df, ict_data
 
@@ -233,12 +325,22 @@ def load_logs():
 logs_df = load_logs()
 
 # Set up layout tabs
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner", "🎯 Most Probable B/S", "📋 Stock Analysis", "🧭 Sectorial View", "🛢️ Commodities"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner", "🎯 Most Probable B/S", "📋 Stock Analysis", "🧭 Sectorial View", "🛢️ Commodities", "📈 Strategy Backtester"])
 
 # --- TAB 1: MAIN DASHBOARD ---
 with tab1:
-    with st.spinner(f"Loading institutional data for {selected_ticker}..."):
-        df, ict_data = get_stock_data(selected_ticker)
+    chart_interval = "1d"
+        
+    if ('selected_ticker_data' not in st.session_state or 
+        st.session_state.get('last_loaded_ticker') != selected_ticker or 
+        st.session_state.get('last_loaded_interval') != chart_interval):
+        with st.spinner(f"Loading institutional data for {selected_ticker} ({chart_interval})..."):
+            df, ict_data = get_stock_data(selected_ticker, interval=chart_interval)
+            st.session_state['selected_ticker_data'] = (df, ict_data)
+            st.session_state['last_loaded_ticker'] = selected_ticker
+            st.session_state['last_loaded_interval'] = chart_interval
+    else:
+        df, ict_data = st.session_state['selected_ticker_data']
 
     add_print_button()
 
@@ -275,7 +377,10 @@ with tab1:
         with ctrl_col1:
             chart_theme = st.radio("Chart Theme", ["Dark", "Light"], index=1, horizontal=True)
         with ctrl_col2:
-            days_to_show = st.slider("Chart Zoom (Days)", min_value=14, max_value=365, value=90, step=7)
+            zoom_label = "Chart Zoom (Periods)" if chart_interval == "1h" else "Chart Zoom (Days)"
+            max_zoom = min(len(df), 365) if not df.empty else 90
+            default_zoom = min(len(df), 90) if not df.empty else 90
+            days_to_show = st.slider(zoom_label, min_value=14, max_value=max_zoom, value=default_zoom, step=7)
         with ctrl_col3:
             st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
             refresh = st.button("↻ Refresh Live Data", use_container_width=True)
@@ -297,7 +402,8 @@ with tab1:
             
         for ob in ict_data.get('ob', []):
             fcolor = "rgba(51, 153, 255, 0.25)" if ob['type'] == 'Bull OB' else "rgba(255, 136, 51, 0.25)"
-            fig.add_shape(type="rect", x0=ob['start'], y0=ob['bot'], x1=max_date, y1=ob['top'], line=dict(width=1, color=fcolor.replace("0.25", "0.7")), fillcolor=fcolor, layer="below")
+            end_d = ob.get('end', max_date)
+            fig.add_shape(type="rect", x0=ob['start'], y0=ob['bot'], x1=end_d, y1=ob['top'], line=dict(width=1, color=fcolor.replace("0.25", "0.7")), fillcolor=fcolor, layer="below")
             
         for liq in ict_data.get('liq', []):
             lcolor = "#FF5555" if liq['type'] == 'BSL' else "#55FF99"
@@ -537,11 +643,7 @@ with tab3:
     st.subheader("🎯 Top 10 Most Probable Bullish & Bearish Setups")
     st.markdown("This engine cross-references the **ICT Technical Scanner** with the **Hermes AI Fundamental Engine** to find the absolute highest probability trades.")
     
-    col_t1, col_t2 = st.columns(2)
-    with col_t1:
-        st.markdown("### 🤖 Hermes Telegram Integration")
-        bot_token = st.text_input("Telegram Bot Token:", type="password", placeholder="Enter your BotFather Token")
-        chat_id = st.text_input("Channel/Chat ID:", placeholder="e.g. @sudhir_ict_signals or -100123456789")
+    st.info("💡 **Setup Scanner Settings**: Configure your timeframe and Telegram Bot credentials in the sidebar menu on the left.")
     
     st.markdown("---")
     
@@ -565,15 +667,13 @@ with tab3:
                     
                     from fundamental import get_fundamental_score
                     
-                    def enrich_list(raw_list, req_count=10):
-                        enriched = []
-                        for item in raw_list:
-                            if len(enriched) >= req_count:
-                                break
-                            
+                    from concurrent.futures import ThreadPoolExecutor, as_completed
+                    
+                    def process_single_candidate(item, bias):
+                        try:
                             # Filter 1: Price > 55
                             if item.get("Price", 0) <= 55:
-                                continue
+                                return None
                                 
                             ticker = item["Ticker"]
                             if not ticker.endswith(".NS") and not ticker.endswith(".BO"):
@@ -583,13 +683,61 @@ with tab3:
                             
                             # Filter 2: Volume > 300,000
                             if volume <= 300000:
-                                continue
+                                return None
+                                
+                            # Filter 4 (Rule 4): timeframe indicator checks
+                            scan_period = "1mo" if scan_interval == "1h" else "1y"
+                            df_tf = fetch_data(ticker, period=scan_period, interval=scan_interval)
+                            if df_tf.empty or len(df_tf) < 50:
+                                return None
+                            df_tf, ict_tf = calculate_ict_indicators(ticker, df_tf, generate_logs=False)
+                            if df_tf.empty:
+                                return None
+                                
+                            latest_row = df_tf.iloc[-1]
+                            latest_close = latest_row['Close']
+                            obs = ict_tf.get('ob', [])
                             
-                            # Determine emoji based on verdict
+                            if bias == "Bullish":
+                                # Check RSI >= 55
+                                latest_rsi = latest_row.get('RSI_14', 0)
+                                if latest_rsi < 55:
+                                    return None
+                                    
+                                # Check Close > mean VWMA
+                                latest_vwma = latest_row.get('VWMA_50', 0)
+                                if latest_close <= latest_vwma:
+                                    return None
+                                    
+                                # Find the most recent Bull OB in ict_1h
+                                bull_obs = [ob for ob in obs if ob['type'] == 'Bull OB']
+                                if not bull_obs:
+                                    return None
+                                most_recent_ob = bull_obs[-1]
+                                
+                                # Verify that the most recent Bull OB is active (unmitigated) and the latest close is above its top but within 5%
+                                if not most_recent_ob.get('active', True):
+                                    return None
+                                if latest_close <= most_recent_ob['top'] or latest_close > most_recent_ob['top'] * 1.05:
+                                    return None
+                                    
+                            elif bias == "Bearish":
+                                # Find the most recent Bear OB in ict_1h
+                                bear_obs = [ob for ob in obs if ob['type'] == 'Bear OB']
+                                if not bear_obs:
+                                    return None
+                                most_recent_ob = bear_obs[-1]
+                                
+                                # Verify that the most recent Bear OB is active (unmitigated) and the latest close is below its bot but within 5%
+                                if not most_recent_ob.get('active', True):
+                                    return None
+                                if latest_close >= most_recent_ob['bot'] or latest_close < most_recent_ob['bot'] * 0.95:
+                                    return None
+                                    
                             verdict_clean = verdict.replace("Strong ", "")
                             v_emoji = "🟢" if "BUY" in verdict_clean or "Accumulate" in verdict_clean else "🔴" if "SELL" in verdict_clean else "⚪"
-                                
-                            enriched.append({
+                            
+                            return {
                                 "Ticker": item["Ticker"],
                                 "Price": item.get("Price", "N/A"),
                                 "ICT Bias": item["Bias"],
@@ -597,11 +745,30 @@ with tab3:
                                 "Vol (K)": f"{volume/1000:.0f}K",
                                 "Fund. Score": f"{score}/10",
                                 "AI Verdict": f"{v_emoji} {verdict}"
-                            })
-                        return enriched
+                            }
+                        except Exception:
+                            return None
+
+                    def enrich_list(raw_list, bias, req_count=10):
+                        # Filter out cheap stocks first
+                        filtered_raw = [item for item in raw_list if item.get("Price", 0) > 55][:40]
                         
-                    bullish_final = enrich_list(bullish_raw, 10)
-                    bearish_final = enrich_list(bearish_raw, 10)
+                        enriched = []
+                        with ThreadPoolExecutor(max_workers=8) as executor:
+                            futures = {executor.submit(process_single_candidate, item, bias): item for item in filtered_raw}
+                            for future in as_completed(futures):
+                                res = future.result()
+                                if res is not None:
+                                    enriched.append(res)
+                                    
+                        # Sort to maintain original RSI order
+                        ticker_to_index = {item["Ticker"]: i for i, item in enumerate(filtered_raw)}
+                        enriched = sorted(enriched, key=lambda x: ticker_to_index.get(x["Ticker"], 999))
+                        
+                        return enriched[:req_count]
+                        
+                    bullish_final = enrich_list(bullish_raw, "Bullish", 10)
+                    bearish_final = enrich_list(bearish_raw, "Bearish", 10)
                         
                     st.session_state['bullish_final'] = bullish_final
                     st.session_state['bearish_final'] = bearish_final
@@ -779,6 +946,7 @@ with tab5:
 
     if 'sector_data' in st.session_state:
         try:
+            add_print_button(report_title="Professional Sectorial Report")
             import plotly.express as px
             import pandas as pd
             
@@ -836,8 +1004,14 @@ with tab5:
             # Reorder columns
             display_df = display_df[['Sector', 'Star Ratings', 'TrendScore', 'Return_1M', 'RSI']]
             
-            styled_df = (display_df.style
-                .map(color_score, subset=['TrendScore'])
+            # Support both Pandas >= 2.1.0 (has .map) and older versions (has .applymap)
+            styler = display_df.style
+            if hasattr(styler, 'map'):
+                styler = styler.map(color_score, subset=['TrendScore'])
+            else:
+                styler = styler.applymap(color_score, subset=['TrendScore'])
+
+            styled_df = (styler
                 .format({'TrendScore': "{:.2f}", 'Return_1M': "{:.2f}%", 'RSI': "{:.2f}"})
                 .set_properties(**{'text-align': 'right'})
             )
@@ -895,6 +1069,7 @@ with tab6:
     }
     
     if st.button("Generate Expert Commodities Report", use_container_width=True):
+        add_print_button(report_title="Professional Commodities Report")
         with st.spinner("Scanning Global Commodities Data..."):
             for comm_name, comm_ticker in commodities.items():
                 try:
@@ -971,6 +1146,227 @@ with tab6:
 </ul>
 </div>"""
                 st.markdown(html_content, unsafe_allow_html=True)
+
+with tab7:
+    st.subheader("📈 Institutional Strategy Backtester (Rule 4)")
+    st.markdown("Evaluate historical performance of the 'Rule 4' institutional setup: price closing above a key Order Block with RSI momentum support, targeting standard Risk-to-Reward multiples.")
+
+    # Controls row
+    col_bt1, col_bt2, col_bt3, col_bt4 = st.columns(4)
+    with col_bt1:
+        def search_asset_backtest(searchterm: str):
+            return [o for o in all_ticker_options if searchterm.lower() in o.lower()] if searchterm else []
+            
+        bt_ticker_raw = st_searchbox(
+            search_asset_backtest,
+            key="backtest_searchbox",
+            placeholder=f"Type search, e.g. SBIN (default: {selected_ticker})"
+        )
+        
+        if bt_ticker_raw:
+            bt_ticker = bt_ticker_raw.split(" ")[0].upper()
+        else:
+            bt_ticker = selected_ticker
+            
+        bt_ticker = bt_ticker.strip().upper()
+        if "." not in bt_ticker:
+            us_tickers = {"AAPL", "MSFT", "TSLA", "AMZN", "NFLX", "NVDA", "GOOG", "META", "AMD", "INTC", "QCOM", "BABA"}
+            if bt_ticker not in us_tickers:
+                bt_ticker = f"{bt_ticker}.NS"
+                
+    with col_bt2:
+        bt_period = st.selectbox("Lookback Period", ["6mo", "1y", "2y"], index=1, help="Total historical data period to simulate over")
+    with col_bt3:
+        bt_interval = st.selectbox("Timeframe (Interval)", ["1h", "3h", "4h", "1d"], index=0, help="Candle timeframe interval")
+    with col_bt4:
+        bt_rr = st.slider("Risk-to-Reward Ratio (R:R)", min_value=1.0, max_value=5.0, value=2.0, step=0.1, help="Take-profit target as a multiple of risk")
+
+    # Initialize results session state
+    if "backtest_results" not in st.session_state:
+        st.session_state["backtest_results"] = None
+
+    if st.button("🚀 Run Backtest Simulation", use_container_width=True):
+        with st.spinner(f"Running backtest simulation for {bt_ticker} ({bt_period}, {bt_interval}, {bt_rr} R:R)..."):
+            res = run_backtest(bt_ticker, period=bt_period, interval=bt_interval, rr_ratio=bt_rr)
+            st.session_state["backtest_results"] = (bt_ticker, bt_period, bt_interval, bt_rr, res)
+
+    if st.session_state["backtest_results"] is not None:
+        curr_ticker, curr_period, curr_interval, curr_rr, res = st.session_state["backtest_results"]
+        
+        if "error" in res:
+            st.error(f"Backtest error: {res['error']}")
+        else:
+            st.success(f"Simulation completed for **{curr_ticker}** ({curr_period}, {curr_interval}, {curr_rr} R:R)!")
+            
+            # 1. Metric Cards
+            st.markdown("### 📊 Performance Summary")
+            m_col1, m_col2, m_col3, m_col4, m_col5 = st.columns(5)
+            
+            win_rate = res['win_rate']
+            total_trades = res['total_trades']
+            wins = res['wins']
+            losses = res['losses']
+            open_t = res['open']
+            pf = res['profit_factor']
+            dd = res['max_drawdown']
+            fe = res['final_equity']
+            
+            # Format display strings
+            pf_str = f"{pf:.2f}" if pf != float('inf') else "∞"
+            
+            m_col1.metric("Win Rate", f"{win_rate:.2f}%", help="Win Rate = Wins / (Wins + Losses)")
+            m_col2.metric("Total Trades", f"{total_trades}", f"W: {wins} | L: {losses} | O: {open_t}", delta_color="off")
+            m_col3.metric("Profit Factor", pf_str, help="Profit Factor = Gross Profits / Gross Losses")
+            m_col4.metric("Max Drawdown", f"{dd:.2f}%", help="Peak-to-trough maximum paper decline")
+            m_col5.metric("Compounded Return", f"{fe:.2f}", f"{(fe - 100.0):+.2f}%", help="Starting with 100.0 units of capital")
+            
+            # 2. Equity Curve Chart
+            st.markdown("### 📈 Compounded Equity Curve")
+            eq_dates = res['equity_curve']['dates']
+            eq_values = res['equity_curve']['equity']
+            
+            # Determine color based on overall profitability
+            line_color = '#26A69A' if fe >= 100.0 else '#EF5350'
+            
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(
+                x=eq_dates,
+                y=eq_values,
+                mode='lines+markers',
+                name='Compounded Equity',
+                line=dict(color=line_color, width=3),
+                marker=dict(size=6, symbol='circle', color=line_color),
+                hovertemplate="Date: %{x}<br>Equity: %{y:.2f}<extra></extra>"
+            ))
+            
+            # Apply same styling as main chart
+            fig.update_layout(
+                xaxis_rangeslider_visible=False,
+                template="plotly_dark",
+                height=450,
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)",
+                margin=dict(l=40, r=40, t=20, b=40),
+                xaxis=dict(
+                    showgrid=True, gridcolor="rgba(255,255,255,0.05)", griddash='dot',
+                    showspikes=True, spikemode='across', spikethickness=1, spikedash='dot', spikecolor='#999999'
+                ),
+                yaxis=dict(
+                    showgrid=True, gridcolor="rgba(255,255,255,0.05)", griddash='dot',
+                    tickformat='.2f',
+                    showspikes=True, spikemode='across', spikethickness=1, spikedash='dot', spikecolor='#999999'
+                )
+            )
+            
+            st.markdown("""
+            <style>
+            [data-testid="stPlotlyChart"] {
+                background: linear-gradient(180deg, #1e293b 0%, #000000 100%);
+                border: 2px solid #334155;
+                border-radius: 12px;
+                padding: 15px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            
+            st.plotly_chart(fig, use_container_width=True)
+            
+            # 3. Trade History Logs Table
+            st.markdown("### 📋 Trade Logs")
+            trades_list = res['trades']
+            if not trades_list:
+                st.info("No trades were simulated for this selection.")
+            else:
+                df_trades = pd.DataFrame(trades_list)
+                
+                # Format Dates
+                df_trades['entry_date'] = pd.to_datetime(df_trades['entry_date']).dt.strftime('%Y-%m-%d %H:%M')
+                df_trades['exit_date'] = pd.to_datetime(df_trades['exit_date']).dt.strftime('%Y-%m-%d %H:%M')
+                
+                # Round Numeric Columns
+                for r_col in ['entry_price', 'SL', 'TP', 'exit_price', 'pnl', 'return_pct']:
+                    if r_col in df_trades.columns:
+                        df_trades[r_col] = df_trades[r_col].round(2)
+                
+                # Rename columns for presentation
+                df_disp = df_trades.rename(columns={
+                    'ticker': 'Ticker',
+                    'type': 'Type',
+                    'entry_date': 'Entry Date',
+                    'entry_price': 'Entry Price',
+                    'SL': 'Stop Loss',
+                    'TP': 'Take Profit',
+                    'exit_date': 'Exit Date',
+                    'exit_price': 'Exit Price',
+                    'pnl': 'PnL ($)',
+                    'return_pct': 'Return %',
+                    'outcome': 'Outcome'
+                })
+                
+                # Color code outcome column
+                def color_outcome(val):
+                    if val == 'Win':
+                        return 'color: #2ecc71; font-weight: bold;'
+                    elif val == 'Loss':
+                        return 'color: #e74c3c; font-weight: bold;'
+                    return 'color: #f1c40f;'
+                
+                try:
+                    styled_df = df_disp.style.map(color_outcome, subset=['Outcome'])
+                except AttributeError:
+                    styled_df = df_disp.style.applymap(color_outcome, subset=['Outcome'])
+                    
+                st.dataframe(styled_df, use_container_width=True)
+
+    st.markdown("---")
+    st.markdown("### 🧠 Rule 4 Strategy Execution Logics")
+    
+    col_logic1, col_logic2 = st.columns(2)
+    with col_logic1:
+        st.markdown("""
+        <div style="padding: 15px; border-radius: 8px; border-left: 5px solid #3B82F6; background-color: rgba(59, 130, 246, 0.05); margin-bottom: 10px;">
+            <h4 style="margin-top:0; color:#3B82F6;">📥 Entry Trigger Rules</h4>
+            <ul style="margin:0; padding-left:20px; font-size:14px; line-height:1.6;">
+                <li><b>Bullish (Buy) Trade Setup:</b>
+                    <ul>
+                        <li>Latest candle Close is higher than the top boundary of the most recent active <i>unmitigated</i> <b>Bull OB</b>.</li>
+                        <li>Breakout close is fresh: within <b>5%</b> of the OB top boundary (<code>OB_Top &lt; Close &le; OB_Top * 1.05</code>).</li>
+                        <li>Price is above the 50-period Volume Weighted Moving Average (<code>Close &gt; VWMA_50</code>).</li>
+                        <li>14-period RSI confirms bullish momentum (<code>RSI_14 &ge; 55</code>).</li>
+                    </ul>
+                </li>
+                <li style="margin-top:10px;"><b>Bearish (Sell) Trade Setup:</b>
+                    <ul>
+                        <li>Latest candle Close is lower than the bottom boundary of the most recent active <i>unmitigated</i> <b>Bear OB</b>.</li>
+                        <li>Breakout close is fresh: within <b>5%</b> of the OB bottom boundary (<code>OB_Bot * 0.95 &le; Close &lt; OB_Bot</code>).</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_logic2:
+        st.markdown("""
+        <div style="padding: 15px; border-radius: 8px; border-left: 5px solid #10B981; background-color: rgba(16, 185, 129, 0.05); margin-bottom: 10px;">
+            <h4 style="margin-top:0; color:#10B981;">📤 Exit Execution Rules</h4>
+            <ul style="margin:0; padding-left:20px; font-size:14px; line-height:1.6;">
+                <li><b>Long (Buy) Exit Configuration:</b>
+                    <ul>
+                        <li><b>Stop Loss (SL):</b> Placed exactly at the bottom boundary of the triggering Bull OB.</li>
+                        <li><b>Take Profit (TP):</b> Placed dynamically based on the selected Risk-to-Reward (R:R) ratio: <code>TP = Entry + R:R * (Entry - SL)</code>.</li>
+                        <li><b>Triggers:</b> Triggers if future candle's Low &le; SL (Loss) or High &ge; TP (Win).</li>
+                    </ul>
+                </li>
+                <li style="margin-top:10px;"><b>Short (Sell) Exit Configuration:</b>
+                    <ul>
+                        <li><b>Stop Loss (SL):</b> Placed exactly at the top boundary of the triggering Bear OB.</li>
+                        <li><b>Take Profit (TP):</b> Placed dynamically based on the selected Risk-to-Reward (R:R) ratio: <code>TP = Entry - R:R * (SL - Entry)</code>.</li>
+                        <li><b>Triggers:</b> Triggers if future candle's High &ge; SL (Loss) or Low &le; TP (Win).</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
 st.markdown("---")
 st.markdown(
