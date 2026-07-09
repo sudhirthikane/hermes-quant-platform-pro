@@ -1,6 +1,8 @@
-yfinance
-ta
 streamlit
-pandas
+pypdf
 plotly
-streamlit-searchbox
+PyMuPDF
+pytesseract
+Pillow
+bcrypt
+cryptography
