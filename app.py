@@ -643,6 +643,29 @@ with tab3:
     st.subheader("🎯 Top 10 Most Probable Bullish & Bearish Setups")
     st.markdown("This engine cross-references the **ICT Technical Scanner** with the **Hermes AI Fundamental Engine** to find the absolute highest probability trades.")
     
+    with st.expander("📖 View Overlapping Confluence Conditions (Rules)", expanded=False):
+        col_r1, col_r2 = st.columns(2)
+        with col_r1:
+            st.markdown("""
+            ### 🟢 Bullish Entry Confluence (Buy Setup)
+            To execute a perfect buy order, the system requires the following overlapping conditions:
+            * **HTF Confluence (4H EMA):** Price must close above the 4H EMA (the bullish gate) to align with the major trend.
+            * **Market Structure Shift (MSS):** The background/bias must be Green, indicating a Bullish MSS (candle body closed beyond the last swing high).
+            * **Liquidity Sweep:** Price must sweep below the Green Dashed SSL line at a swing low before reversing (low of the last 5 bars was <= SSL).
+            * **Institutional Order Block (OB):** Price respects or reacts to a Blue Box Bull OB (latest close is above OB bottom and <= top * 1.05).
+            * **Fair Value Gap (FVG):** An active Green Box Bull FVG must form on the chart.
+            """)
+        with col_r2:
+            st.markdown("""
+            ### 🔴 Bearish Entry Confluence (Sell Setup)
+            To execute a perfect sell order, the system requires the following overlapping conditions:
+            * **HTF Confluence (4H EMA):** Price must close below the 4H EMA (the bearish gate) to filter out counter-trend noise.
+            * **Market Structure Shift (MSS):** The background/bias must be Red, indicating a Bearish MSS (candle body closed beyond the last swing low).
+            * **Liquidity Sweep:** Price must sweep above the Red Dashed BSL line at a swing high before reversing (high of the last 5 bars was >= BSL).
+            * **Institutional Order Block (OB):** Price respects or reacts to an Orange Box Bear OB (latest close is below OB top and >= bot * 0.95).
+            * **Fair Value Gap (FVG):** An active Red Box Bear FVG must form on the chart.
+            """)
+            
     st.info("💡 **Setup Scanner Settings**: Configure your timeframe and Telegram Bot credentials in the sidebar menu on the left.")
     
     st.markdown("---")
@@ -685,11 +708,12 @@ with tab3:
                             if volume <= 300000:
                                 return None
                                 
-                            # Filter 4 (Rule 4): timeframe indicator checks
-                            scan_period = "1mo" if scan_interval == "1h" else "1y"
+                            # Fetch data based on timeframe
+                            scan_period = "3mo" if scan_interval == "1h" else "1y"
                             df_tf = fetch_data(ticker, period=scan_period, interval=scan_interval)
                             if df_tf.empty or len(df_tf) < 50:
                                 return None
+                                
                             df_tf, ict_tf = calculate_ict_indicators(ticker, df_tf, generate_logs=False)
                             if df_tf.empty:
                                 return None
@@ -698,40 +722,98 @@ with tab3:
                             latest_close = latest_row['Close']
                             obs = ict_tf.get('ob', [])
                             
+                            # Calculate 4H EMA
+                            if scan_interval == "1h":
+                                df_1h = df_tf
+                            else:
+                                df_1h = fetch_data(ticker, period="3mo", interval="1h")
+                                
+                            if df_1h.empty or len(df_1h) < 100:
+                                return None
+                                
+                            # Resample to 4H
+                            ohlc_dict = {
+                                'Open': 'first',
+                                'High': 'max',
+                                'Low': 'min',
+                                'Close': 'last',
+                                'Volume': 'sum'
+                            }
+                            agg_dict = {col: ohlc_dict[col] for col in df_1h.columns if col in ohlc_dict}
+                            try:
+                                df_4h = df_1h.resample('4h', origin='start').agg(agg_dict).dropna()
+                            except TypeError:
+                                df_4h = df_1h.resample('4h').agg(agg_dict).dropna()
+                                
+                            if len(df_4h) < 50:
+                                return None
+                            df_4h['EMA_50'] = df_4h['Close'].ewm(span=50, adjust=False).mean()
+                            latest_4h_ema = df_4h['EMA_50'].iloc[-1]
+                            
                             if bias == "Bullish":
-                                # Check RSI >= 55
-                                latest_rsi = latest_row.get('RSI_14', 0)
-                                if latest_rsi < 55:
+                                # 1. Higher Timeframe Bias (HTF Confluence): Price must close above the 4H EMA
+                                if latest_close <= latest_4h_ema:
                                     return None
                                     
-                                # Check Close > mean VWMA
-                                latest_vwma = latest_row.get('VWMA_50', 0)
-                                if latest_close <= latest_vwma:
+                                # 2. Market Structure Shift (MSS): Background must turn Green, indicating a Bullish MSS
+                                if not ict_tf.get('dynamic_bull_bias', False):
                                     return None
                                     
-                                # Find the most recent Bull OB in ict_1h
+                                # 3. Liquidity Sweep: Price should ideally sweep below the Green Dashed + SSL line
+                                ssl_lines = [liq for liq in ict_tf.get('liq', []) if liq['type'] == 'SSL']
+                                if not ssl_lines:
+                                    return None
+                                latest_ssl = ssl_lines[-1]['price']
+                                recent_lows = df_tf['Low'].iloc[-5:].values
+                                if not any(l <= latest_ssl for l in recent_lows):
+                                    return None
+                                    
+                                # 4. Institutional Order Block (OB): Price should respect or react to a Blue Box
                                 bull_obs = [ob for ob in obs if ob['type'] == 'Bull OB']
                                 if not bull_obs:
                                     return None
                                 most_recent_ob = bull_obs[-1]
-                                
-                                # Verify that the most recent Bull OB is active (unmitigated) and the latest close is above its top but within 5%
                                 if not most_recent_ob.get('active', True):
                                     return None
-                                if latest_close <= most_recent_ob['top'] or latest_close > most_recent_ob['top'] * 1.05:
+                                if latest_close <= most_recent_ob['bot'] or latest_close > most_recent_ob['top'] * 1.05:
+                                    return None
+                                    
+                                # 5. Fair Value Gap (FVG): A Green Box must form
+                                bull_fvgs = [fvg for fvg in ict_tf.get('fvg', []) if fvg['type'] == 'Bull FVG' and fvg.get('active', True)]
+                                if not bull_fvgs:
                                     return None
                                     
                             elif bias == "Bearish":
-                                # Find the most recent Bear OB in ict_1h
+                                # 1. Higher Timeframe Bias (HTF Confluence): Price must close below the 4H EMA
+                                if latest_close >= latest_4h_ema:
+                                    return None
+                                    
+                                # 2. Market Structure Shift (MSS): Background must turn Red, indicating a Bearish MSS
+                                if not ict_tf.get('dynamic_bear_bias', False):
+                                    return None
+                                    
+                                # 3. Liquidity Sweep: Price should ideally sweep above the Red Dashed + BSL line
+                                bsl_lines = [liq for liq in ict_tf.get('liq', []) if liq['type'] == 'BSL']
+                                if not bsl_lines:
+                                    return None
+                                latest_bsl = bsl_lines[-1]['price']
+                                recent_highs = df_tf['High'].iloc[-5:].values
+                                if not any(h >= latest_bsl for h in recent_highs):
+                                    return None
+                                    
+                                # 4. Institutional Order Block (OB): Price should respect or react to an Orange Box
                                 bear_obs = [ob for ob in obs if ob['type'] == 'Bear OB']
                                 if not bear_obs:
                                     return None
                                 most_recent_ob = bear_obs[-1]
-                                
-                                # Verify that the most recent Bear OB is active (unmitigated) and the latest close is below its bot but within 5%
                                 if not most_recent_ob.get('active', True):
                                     return None
-                                if latest_close >= most_recent_ob['bot'] or latest_close < most_recent_ob['bot'] * 0.95:
+                                if latest_close >= most_recent_ob['top'] or latest_close < most_recent_ob['bot'] * 0.95:
+                                    return None
+                                    
+                                # 5. Fair Value Gap (FVG): A Red Box must form
+                                bear_fvgs = [fvg for fvg in ict_tf.get('fvg', []) if fvg['type'] == 'Bear FVG' and fvg.get('active', True)]
+                                if not bear_fvgs:
                                     return None
                                     
                             verdict_clean = verdict.replace("Strong ", "")

@@ -4737,5 +4737,33 @@
         "action": "Bearish FVG",
         "price": 70.55,
         "rsi": 26.15
+    },
+    {
+        "timestamp": "2026-06-25T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 352.83,
+        "rsi": 28.76
+    },
+    {
+        "timestamp": "2026-07-09T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bearish FVG",
+        "price": 384.36,
+        "rsi": 47.13
+    },
+    {
+        "timestamp": "2026-07-15T00:00:00",
+        "ticker": "MSFT",
+        "action": "MSS BULLISH",
+        "price": 395.63,
+        "rsi": 53.54
+    },
+    {
+        "timestamp": "2026-07-16T00:00:00",
+        "ticker": "MSFT",
+        "action": "Bullish FVG",
+        "price": 401.1,
+        "rsi": 56.28
     }
 ]
