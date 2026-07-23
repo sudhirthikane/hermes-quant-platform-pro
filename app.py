@@ -2,10 +2,229 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+import io
+import requests
+import concurrent.futures
+import warnings
+from datetime import datetime
 import plotly.graph_objects as go
 import streamlit.components.v1 as components
+import yfinance as yf
 from engine import fetch_data, calculate_ict_indicators, LOG_FILE
 from backtester import run_backtest
+
+# Openpyxl for advanced Excel formatting
+from openpyxl import Workbook
+from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
+from openpyxl.utils.dataframe import dataframe_to_rows
+
+# Indicator library with fallback if pandas_ta is not directly available
+# Explicit WMA and RSI functions for guaranteed accuracy
+def calc_wma(series, length=21):
+    """Calculates Weighted Moving Average (WMA) with exact mathematical weights [1..N]."""
+    weights = np.arange(1, length + 1)
+    return series.rolling(length).apply(lambda x: np.dot(x, weights) / weights.sum(), raw=True)
+
+def calc_rsi(series, length=9):
+    """Calculates Relative Strength Index (RSI)."""
+    delta = series.diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=length).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=length).mean()
+    rs = gain / loss.replace(0, np.nan)
+    return 100 - (100 / (1 + rs))
+
+try:
+    import pandas_ta as ta
+except ImportError:
+    class FallbackTA:
+        @staticmethod
+        def rsi(close_series, length=9):
+            return calc_rsi(close_series, length)
+        
+        @staticmethod
+        def wma(close_series, length=21):
+            return calc_wma(close_series, length)
+    ta = FallbackTA
+
+warnings.filterwarnings("ignore")
+
+# -----------------------------------------------------------------------------
+# CUSTOM SCANNER DATA ACQUISITION & ENGINE HELPERS
+# -----------------------------------------------------------------------------
+@st.cache_data(ttl=3600)
+def get_indian_equities():
+    """Fetches active equity tickers from the NSE India archives."""
+    url = "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    try:
+        r = requests.get(url, headers=headers, timeout=10)
+        df = pd.read_csv(io.BytesIO(r.content))
+        return (df['SYMBOL'] + ".NS").tolist()
+    except Exception as e:
+        st.sidebar.error(f"Failed to fetch NSE tickers: {e}")
+        return []
+
+@st.cache_data(ttl=3600)
+def get_us_equities(limit=1000):
+    """Fetches top US stock tickers using the official SEC API."""
+    url = "https://www.sec.gov/files/company_tickers.json"
+    headers = {'User-Agent': 'MarketScannerUI (your@email.com)'} 
+    try:
+        r = requests.get(url, headers=headers, timeout=10)
+        data = r.json()
+        tickers = [item['ticker'] for item in data.values()]
+        return [t.replace('-', '-') for t in tickers][:limit]
+    except Exception as e:
+        st.sidebar.error(f"Failed to fetch US tickers: {e}")
+        return []
+
+def get_commodities():
+    """Returns major global commodity futures."""
+    return [
+        "GC=F", "SI=F", "PL=F", "PA=F", "HG=F",  # Metals
+        "CL=F", "HO=F", "NG=F", "RB=F", "BZ=F",  # Energy
+        "ZC=F", "ZW=F", "ZS=F", "ZM=F", "ZL=F",  # Grains
+        "KC=F", "CT=F", "SB=F", "CC=F", "OJ=F",  # Softs
+        "LE=F", "HE=F", "GF=F", "LBS=F"          # Meats & Lumber
+    ]
+
+def check_stock_conditions(ticker, market_name, timeframe="1H"):
+    """Scans a single ticker for the selected timeframe strategy conditions: RSI(9) > WMA(RSI(9), 21)."""
+    try:
+        tf_clean = timeframe.lower().strip()
+        
+        if tf_clean == "1d":
+            df = yf.download(ticker, period="1y", interval="1d", progress=False)
+            if df.empty:
+                return None
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
+        else:
+            df_1h = yf.download(ticker, period="60d", interval="1h", progress=False)
+            if df_1h.empty:
+                return None
+            if isinstance(df_1h.columns, pd.MultiIndex):
+                df_1h.columns = df_1h.columns.get_level_values(0)
+                
+            if tf_clean == "1h":
+                df = df_1h
+            else:
+                resample_freq = "3h" if tf_clean == "3h" else "4h"
+                ohlc_dict = {'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum'}
+                agg_dict = {col: ohlc_dict[col] for col in df_1h.columns if col in ohlc_dict}
+                try:
+                    df = df_1h.resample(resample_freq, origin='start').agg(agg_dict).dropna()
+                except TypeError:
+                    df = df_1h.resample(resample_freq).agg(agg_dict).dropna()
+        
+        if df.empty or len(df) < 32:
+            return None
+
+        # Ensure 1D pandas Series for Close & Volume
+        close_s = df['Close'].squeeze() if isinstance(df['Close'], pd.DataFrame) else df['Close']
+        volume_s = df['Volume'].squeeze() if isinstance(df['Volume'], pd.DataFrame) else df['Volume']
+
+        # Step 1: Calculate 9-period RSI
+        df['RSI_9'] = calc_rsi(close_s, length=9)
+        
+        # Step 2: Calculate 21-period WMA ON RSI_9 (WMA of RSI)
+        df['WMA_RSI_21'] = calc_wma(df['RSI_9'], length=21)
+        
+        df.dropna(subset=['RSI_9', 'WMA_RSI_21'], inplace=True)
+        
+        if len(df) < 2:
+            return None
+
+        curr_candle = df.iloc[-1]
+
+        curr_close = float(curr_candle['Close'])
+        curr_rsi = float(curr_candle['RSI_9'])
+        curr_wma_rsi = float(curr_candle['WMA_RSI_21'])
+        curr_vol = float(curr_candle['Volume'])
+
+        # Strategy Conditions: RSI(9) > WMA(RSI(9), 21), Price > 70, Volume > 200k
+        rsi_above_wma = curr_rsi > curr_wma_rsi
+        price_above_70 = curr_close > 70
+        volume_high = curr_vol > 200000
+
+        if rsi_above_wma and price_above_70 and volume_high:
+            return {
+                'Ticker': ticker,
+                'Market': market_name,
+                'Timeframe': timeframe,
+                'Time': df.index[-1].strftime('%Y-%m-%d %H:%M:%S'),
+                'Close': round(curr_close, 2),
+                'Volume': int(curr_vol),
+                'RSI (9)': round(curr_rsi, 2),
+                'WMA(RSI, 21)': round(curr_wma_rsi, 2)
+            }
+    except Exception:
+        pass
+    return None
+
+def create_formatted_excel(df):
+    """Generates a styled Excel workbook in memory."""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Scanner Results"
+
+    for r in dataframe_to_rows(df, index=False, header=True):
+        ws.append(r)
+
+    # Styles
+    header_fill = PatternFill(start_color="1F4E78", end_color="1F4E78", fill_type="solid")
+    header_font = Font(color="FFFFFF", bold=True)
+    zebra_fill = PatternFill(start_color="F9F9F9", end_color="F9F9F9", fill_type="solid")
+    thin_border = Border(left=Side(style='thin', color='DDDDDD'), 
+                         right=Side(style='thin', color='DDDDDD'), 
+                         top=Side(style='thin', color='DDDDDD'), 
+                         bottom=Side(style='thin', color='DDDDDD'))
+
+    # Apply Header Styling
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal="center")
+
+    # Apply Row Styling
+    for row_idx, row in enumerate(ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=8), start=2):
+        for cell in row:
+            cell.border = thin_border
+            if row_idx % 2 == 0:
+                cell.fill = zebra_fill
+            
+            # Number formats
+            if cell.column_letter in ['E', 'H']:
+                cell.number_format = '#,##0.00'
+            elif cell.column_letter == 'F':
+                cell.number_format = '#,##0'
+            elif cell.column_letter == 'G':
+                cell.number_format = '0.00'
+
+    # Auto-adjust column widths
+    column_widths = {'A': 15, 'B': 18, 'C': 12, 'D': 20, 'E': 12, 'F': 15, 'G': 10, 'H': 15}
+    for col, width in column_widths.items():
+        ws.column_dimensions[col].width = width
+
+    ws.auto_filter.ref = ws.dimensions
+
+    # Save to BytesIO buffer
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    return buffer.getvalue()
+
+    # Auto-adjust column widths
+    column_widths = {'A': 15, 'B': 18, 'C': 20, 'D': 12, 'E': 15, 'F': 10, 'G': 15}
+    for col, width in column_widths.items():
+        ws.column_dimensions[col].width = width
+
+    ws.auto_filter.ref = ws.dimensions
+
+    # Save to BytesIO buffer
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    return buffer.getvalue()
+
 
 def add_print_button(report_title="Professional Equity Report"):
     from datetime import datetime
@@ -325,7 +544,7 @@ def load_logs():
 logs_df = load_logs()
 
 # Set up layout tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner", "🎯 Most Probable B/S", "📋 Stock Analysis", "🧭 Sectorial View", "🛢️ Commodities", "📈 Strategy Backtester"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(["📊 Main Dashboard", "📡 Indian Market Scanner", "🎯 Most Probable B/S", "📋 Stock Analysis", "🧭 Sectorial View", "🛢️ Commodities", "📈 Strategy Backtester", "⚡ Custom Scanner"])
 
 # --- TAB 1: MAIN DASHBOARD ---
 with tab1:
@@ -1450,6 +1669,106 @@ with tab7:
         </div>
         """, unsafe_allow_html=True)
 
+with tab8:
+    st.subheader("⚡ Multi-Market Technical Scanner")
+    st.markdown("**Strategy:** `1H Timeframe` | `1H RSI(9) > 1H WMA(RSI(9), 21)` | `Price > 70` | `Volume > 200k`")
+    
+    st.markdown("### ⚙️ Scanner Configuration")
+    col_sel, col_tf, col_btn = st.columns([2, 1, 1])
+    with col_sel:
+        market_choice = st.selectbox(
+            "Select Asset Class to Scan:",
+            ["All Markets (Full Scan)", "Indian Equities (~2000)", "US Equities (Top 1000)", "Commodities"],
+            key="custom_scanner_market_choice"
+        )
+    with col_tf:
+        timeframe_choice = st.selectbox(
+            "Select Timeframe:",
+            ["1H", "3H", "4H", "1D"],
+            key="custom_scanner_tf_choice"
+        )
+    with col_btn:
+        st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+        run_scan = st.button("🚀 Run Scanner Engine", type="primary", use_container_width=True, key="custom_scanner_run_btn")
+
+    if run_scan:
+        scan_list = []
+        
+        with st.spinner("Fetching latest market lists..."):
+            if market_choice in ["Indian Equities (~2000)", "All Markets (Full Scan)"]:
+                scan_list.extend([(t, "Indian Equities") for t in get_indian_equities()])
+                
+            if market_choice in ["US Equities (Top 1000)", "All Markets (Full Scan)"]:
+                scan_list.extend([(t, "US Equities") for t in get_us_equities()])
+                
+            if market_choice in ["Commodities", "All Markets (Full Scan)"]:
+                scan_list.extend([(t, "Commodities") for t in get_commodities()])
+
+        total_assets = len(scan_list)
+        
+        if total_assets == 0:
+            st.error("Failed to load any tickers. Please check your internet connection.")
+        else:
+            st.write(f"### Initializing multi-threaded scan ({timeframe_choice}) for **{total_assets}** assets...")
+            
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            results = []
+            completed = 0
+            
+            # Execute parallel scanning 
+            with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+                future_to_ticker = {
+                    executor.submit(check_stock_conditions, t[0], t[1], timeframe_choice): t 
+                    for t in scan_list
+                }
+                
+                for future in concurrent.futures.as_completed(future_to_ticker):
+                    completed += 1
+                    
+                    # Update UI elements
+                    progress_bar.progress(completed / total_assets)
+                    if completed % 10 == 0 or completed == total_assets:
+                        status_text.text(f"Processed {completed} of {total_assets} assets...")
+                    
+                    res = future.result()
+                    if res:
+                        results.append(res)
+
+            st.divider()
+            
+            # Results rendering
+            if results:
+                st.success(f"Scan Complete! Found **{len(results)}** assets matching the criteria.")
+                
+                df_results = pd.DataFrame(results)
+                
+                # Display interactive dataframe
+                st.dataframe(
+                    df_results.style.format({
+                        "Close": "{:.2f}",
+                        "WMA(RSI, 21)": "{:.2f}",
+                        "Volume": "{:,}",
+                        "RSI (9)": "{:.2f}"
+                    }),
+                    use_container_width=True,
+                    hide_index=True
+                )
+                
+                # Excel Export 
+                excel_data = create_formatted_excel(df_results)
+                st.download_button(
+                    label="📥 Download Formatted Excel Report",
+                    data=excel_data,
+                    file_name=f"Scanner_Results_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    type="primary"
+                )
+                
+            else:
+                st.warning("Scan complete. No assets matched the strategy conditions during this execution.")
+
 st.markdown("---")
 st.markdown(
     """
@@ -1459,3 +1778,4 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+

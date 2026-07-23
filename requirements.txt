@@ -4,3 +4,6 @@ streamlit
 pandas
 plotly
 streamlit-searchbox
+pandas-ta
+openpyxl
+requests
